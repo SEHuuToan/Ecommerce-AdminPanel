@@ -1,4 +1,12 @@
 
+.navbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 40px;
+    margin-bottom: 1px;
+    box-shadow: 0 1px 3px -2px black;
+}
 
 .nav-logo{
     width: 148px;
@@ -7,4 +15,10 @@
 .nav-profile{
     width: 68px;
     height: 68px;
+}
+
+@media (max-width: 800px) {
+    .navbar{
+        padding: 5px 10px;
+    }
 }
