@@ -1,7 +1,7 @@
 import React from 'react';
 import './Admin.css';
 import { Routes, Route } from 'react-router-dom';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar from '../../components/sidebar/Sidebar';
 import AddProduct from '../../components/add_product/AddProduct';
 import AddBlog from '../../components/add_blog/AddBlog';
 import ListProduct from '../../components/list_product/ListProduct';
