@@ -4,6 +4,7 @@ import { Image, Button, Select } from "antd";
 import { axiosGet } from "../../utils/axiosUtils";
 
 
+
 interface Product {
   name: string;
   odo: string;
@@ -21,6 +22,7 @@ interface Product {
 const ListProduct: React.FC = () => {
   const [allproducts, setAllProducts] = useState<Product[]>([]);
 
+
   const getAllProduct = async () => {
     try {
       const res = await axiosGet("all-product");
@@ -32,7 +34,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductSport = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/all-product");
+      const res = await axiosGet("product/sport-bike");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -41,7 +43,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductNaked = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/all-product");
+      const res = await axiosGet("naked-bike");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -50,7 +52,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductAdventure = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/all-product");
+      const res = await axiosGet("product/adventure");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -59,7 +61,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductClassic = async () => {
     try {
-      const res = await axios.get("http://localhost:4000/all-product");
+      const res = await axiosGet("product/classic");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -68,22 +70,19 @@ const ListProduct: React.FC = () => {
   };
   useEffect(() => {
     getAllProduct();
-    getProductSport();
-    getProductNaked();
-    getProductAdventure();
-    getProductClassic();
   }, []);
-  const handleChange = (value: string) => {
+
+  const handleChangeCategory = (value: string) => {
     if(value === 'all'){
-        getAllProduct
+        getAllProduct();
     }else if(value === 'sport-bike'){
-        getProductSport
+        getProductSport();
     }else if(value === 'naked-bike'){
-        getProductNaked
+      getProductNaked();
     }else if(value === 'adventure'){
-        getProductAdventure
+      getProductAdventure();
     }else {
-        getProductClassic
+      getProductClassic();
     }
   };
   return (
@@ -95,7 +94,7 @@ const ListProduct: React.FC = () => {
           <Select
             defaultValue="all"
             style={{ width: "100%" }}
-            onChange={handleChange}
+            onChange={handleChangeCategory}
             options={[
               { value: "all", label: "Get all products" },
               { value: "sport-bike", label: "Get Sport-bike products" },

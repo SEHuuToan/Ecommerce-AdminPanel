@@ -71,7 +71,7 @@ const AddProduct: React.FC = () => {
 
     try {
       const uploadImage = await axios.post(
-        "http://localhost:4000/upload",
+        "http://localhost:4000/api/products/upload",
         formData
       );
       const imageUrls = uploadImage.data.imageUrls;
@@ -80,7 +80,7 @@ const AddProduct: React.FC = () => {
         image: JSON.parse(JSON.stringify(imageUrls)),
       };
       const createProduct = await axios.post(
-        "http://localhost:4000/add-product",
+        "http://localhost:4000/api/products/",
         productData
       );
       if (createProduct.data.success) {
