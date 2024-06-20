@@ -13,30 +13,23 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
-
 const { TextArea } = Input;
-
-interface ImageUploadResponse {
-  success: number;
-  image_urls: string[];
-}
-
 interface Product {
-  name: string,
-  odo: string,
-  color: string,
-  model: string,
-  brand: string,
-  option: string,
-  description: string,
-  category: string,
-  image: [],
-  price: number
+  name: string;
+  odo: string;
+  color: string;
+  model: string;
+  brand: string;
+  option: string;
+  description: string;
+  category: string;
+  image: [];
+  price: number;
 }
 const AddProduct: React.FC = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [product, setProduct] = useState<Product>({
     name: "",
     odo: "",
@@ -49,7 +42,6 @@ const AddProduct: React.FC = () => {
     image: [],
     price: 0,
   });
-
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -72,19 +64,25 @@ const AddProduct: React.FC = () => {
     setFileList(newFileList);
 
   const createProduct = async () => {
-    const formData  = new FormData();
+    const formData = new FormData();
     fileList.forEach((file) => {
-      formData .append("product", file.originFileObj as File);
+      formData.append("product", file.originFileObj as File);
     });
 
     try {
-      const uploadImage = await axios.post("http://localhost:4000/upload", formData );
+      const uploadImage = await axios.post(
+        "http://localhost:4000/upload",
+        formData
+      );
       const imageUrls = uploadImage.data.imageUrls;
       const productData = {
         ...product,
         image: JSON.parse(JSON.stringify(imageUrls)),
       };
-      const createProduct = await axios.post("http://localhost:4000/add-product", productData);
+      const createProduct = await axios.post(
+        "http://localhost:4000/add-product",
+        productData
+      );
       if (createProduct.data.success) {
         message.success("Tạo sản phẩm thành công!");
       } else {
@@ -95,8 +93,6 @@ const AddProduct: React.FC = () => {
       message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
-  
-
 
   const uploadButton = (
     <div>
@@ -108,40 +104,75 @@ const AddProduct: React.FC = () => {
     <div className="add-product">
       <div className="addproduct-itemfield">
         <p>Input Name</p>
-        <input type="text" name="name" value={product.name} onChange={handleInputChange} />
+        <input
+          type="text"
+          name="name"
+          value={product.name}
+          onChange={handleInputChange}
+        />
       </div>
       <Row className="row-setup">
         <Col span={7}>
           <div className="addproduct-itemfield">
             <p>Input Odo</p>
-            <input type="text" name="odo" value={product.odo} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="odo"
+              value={product.odo}
+              onChange={handleInputChange}
+            />
           </div>
         </Col>
         <Col span={7}>
           <div className="addproduct-itemfield">
             <p>Input Model</p>
-            <input type="text" name="model" value={product.model} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="model"
+              value={product.model}
+              onChange={handleInputChange}
+            />
           </div>
         </Col>
         <Col span={7}>
           <div className="addproduct-itemfield">
             <p>Input Brand</p>
-            <input type="text" name="brand" value={product.brand} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="brand"
+              value={product.brand}
+              onChange={handleInputChange}
+            />
           </div>
         </Col>
       </Row>
       <div className="addproduct-itemfield">
         <p>Input Color</p>
-        <input type="text" name="color" value={product.color} onChange={handleInputChange} />
+        <input
+          type="text"
+          name="color"
+          value={product.color}
+          onChange={handleInputChange}
+        />
       </div>
 
       <div className="addproduct-itemfield">
         <p>Input Option</p>
-        <TextArea rows={2} name="option" value={product.option} onChange={handleInputChange} />
+        <TextArea
+          rows={2}
+          name="option"
+          value={product.option}
+          onChange={handleInputChange}
+        />
       </div>
       <div className="addproduct-itemfield">
         <p>Input Description</p>
-        <TextArea rows={2} name="description" value={product.description} onChange={handleInputChange} />
+        <TextArea
+          rows={2}
+          name="description"
+          value={product.description}
+          onChange={handleInputChange}
+        />
       </div>
       <Row>
         <Col span={12}>
@@ -165,7 +196,12 @@ const AddProduct: React.FC = () => {
         <Col span={12}>
           <div className="addproduct-itemfield">
             <p>Input Price</p>
-            <input type="text" name="price" value={product.price} onChange={handleInputChange} />
+            <input
+              type="text"
+              name="price"
+              value={product.price}
+              onChange={handleInputChange}
+            />
           </div>
         </Col>
       </Row>
@@ -197,7 +233,9 @@ const AddProduct: React.FC = () => {
         )}
       </div>
       <div className="action-button">
-        <Button type="primary" onClick={createProduct}>Save</Button>
+        <Button type="primary" onClick={createProduct}>
+          Save
+        </Button>
       </div>
     </div>
   );
