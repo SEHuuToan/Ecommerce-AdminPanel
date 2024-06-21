@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./ListProduct.css";
-import { Image, Button, Select } from "antd";
+import { Select } from "antd";
 import { axiosGet } from "../../utils/axiosUtils";
-
+import TableData from "./tableData";
 
 
 interface Product {
+  id: string,
   name: string;
   odo: string;
   color: string;
@@ -43,7 +44,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductNaked = async () => {
     try {
-      const res = await axiosGet("naked-bike");
+      const res = await axiosGet("product/naked-bike");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -60,6 +61,15 @@ const ListProduct: React.FC = () => {
     }
   };
   const getProductClassic = async () => {
+    try {
+      const res = await axiosGet("product/classic");
+      const data: Product[] = res.data;
+      setAllProducts(data);
+    } catch (error) {
+      console.error("Failed to get all product", error);
+    }
+  };
+  const deleteProduct = async () => {
     try {
       const res = await axiosGet("product/classic");
       const data: Product[] = res.data;
@@ -106,24 +116,7 @@ const ListProduct: React.FC = () => {
         </div>
       </div>
       <div className="listproduct-allproduct">
-        {allproducts.map((product, index) => {
-          return (
-            <div key={index} className="listproduct-format">
-              <div className="productlist-image">
-                {product.image.length > 0 && <Image src={product.image[0]} />}
-              </div>
-              <div className="productlist-detail">
-                <div>Name: {product.name}</div>
-                <div>Category: {product.category}</div>
-                <div>Price: {product.price} $</div>
-                <div>Status: {product.status ? "Active" : "Disable"}</div>
-                {/* <div className="btn-deleteproduct">
-                  <Button type="primary">Delete</Button>
-                </div> */}
-              </div>
-            </div>
-          );
-        })}
+          <TableData data={allproducts} handleDelete={deleteProduct}/>
       </div>
     </div>
   );
