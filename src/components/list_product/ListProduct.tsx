@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./ListProduct.css";
 import { Select } from "antd";
-import { axiosGet } from "../../utils/axiosUtils";
+import { axiosGet, axiosDelete } from "../../utils/axiosUtils";
 import TableData from "./tableData";
-
+import type {productType} from "./tableData";
 
 interface Product {
-  id: string,
+  _id: string,
   name: string;
   odo: string;
   color: string;
@@ -69,13 +69,14 @@ const ListProduct: React.FC = () => {
       console.error("Failed to get all product", error);
     }
   };
-  const deleteProduct = async () => {
+  const deleteProduct = async (id: string) => {
     try {
-      const res = await axiosGet("product/classic");
-      const data: Product[] = res.data;
-      setAllProducts(data);
+      const res = await axiosDelete(`${id}`)
+      if(res.data.success){
+        setAllProducts(allproducts.filter(product => product._id !== id));
+      }
     } catch (error) {
-      console.error("Failed to get all product", error);
+      console.error("Delete Fail", error);
     }
   };
   useEffect(() => {

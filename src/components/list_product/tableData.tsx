@@ -1,8 +1,8 @@
 import type { TableProps } from "antd";
 import { Button, Popconfirm, Table } from "antd";
 
-interface productType {
-  id: string;
+export interface productType {
+  _id: string;
   name: string;
   odo: string;
   color: string;
@@ -16,7 +16,7 @@ interface productType {
   status: boolean;
 }
 interface ColumnProps {
-  handleDelete: (row: productType) => void;
+  handleDelete: (id: string) => void;
 }
 
 export const productColumns = ({
@@ -59,7 +59,8 @@ export const productColumns = ({
     dataIndex: "action",
     key: "action",
     render: (_, row: productType) => (
-      <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(row)}>
+      <Popconfirm title="Sure to delete?" onConfirm={() => {
+        handleDelete(row._id)}}>
         <Button>Delete</Button>
       </Popconfirm>
     ),
@@ -68,12 +69,12 @@ export const productColumns = ({
 
 interface ProductTableProps {
   data: productType[];
-  handleDelete: (row: productType) => void;
+  handleDelete: (id: string) => void;
 }
 const TableData: React.FC<ProductTableProps> = ({ data, handleDelete }) => {
   const columns = productColumns({ handleDelete });
 
-  return <Table<productType> columns={columns} dataSource={data} rowKey="id" />;
+  return <Table<productType> columns={columns} dataSource={data} rowKey="_id" />;
 };
 
 export default TableData;
