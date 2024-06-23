@@ -1,5 +1,6 @@
 import type { TableProps } from "antd";
 import { Button, Popconfirm, Table } from "antd";
+import { Link } from 'react-router-dom';
 
 export interface productType {
   _id: string;
@@ -64,13 +65,11 @@ export const productColumns = ({
     render: (_, row: productType) => (
       <>
         <div style={{display: 'flex', gap: '15px', justifyContent: 'center'}}>
-          <Button
-            onClick={() => {
-              handleUpdate(row._id);
-            }}
-          >
+        <Link to={`/update-product/${row._id}`}>
+          <Button>
             Update
           </Button>
+        </Link>
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => {

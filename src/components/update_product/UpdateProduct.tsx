@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./AddProduct.css";
+import "./UpdateProduct.css";
 import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
@@ -26,7 +26,7 @@ interface Product {
   image: [];
   price: number;
 }
-const AddProduct: React.FC = () => {
+const UpdateProduct: React.FC = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -62,38 +62,29 @@ const AddProduct: React.FC = () => {
   };
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
+  //Logic delete image when update
+  const handleRemoveImage = async (file: UploadFile) => {
+    if (file.url) {
+        try {
+            const filename = file.url.split('/').pop();
+            await axios.delete(`http://localhost:4000/api/images/${filename}`);
+        } catch (error) {
+            console.error('Failed to delete image:', error);
+            message.error('Failed to delete image');
+        }
+    }
+};
 
-
-  //Logic create product
-  const createProduct = async () => {
+  //logic save product
+  const updateProduct = () => {};
+  //save change
+  const saveProduct = async () => {
     const formData = new FormData();
     fileList.forEach((file) => {
       formData.append("product", file.originFileObj as File);
     });
+    await updateProduct();
 
-    try {
-      const uploadImage = await axios.post(
-        "http://localhost:4000/api/products/upload",
-        formData
-      );
-      const imageUrls = uploadImage.data.imageUrls;
-      const productData = {
-        ...product,
-        image: JSON.parse(JSON.stringify(imageUrls)),
-      };
-      const createProduct = await axios.post(
-        "http://localhost:4000/api/products/",
-        productData
-      );
-      if (createProduct.data.success) {
-        message.success("Tạo sản phẩm thành công!");
-      } else {
-        message.error("Tạo sản phẩm thất bại!");
-      }
-    } catch (error) {
-      console.error("Lỗi khi tải ảnh lên hoặc tạo sản phẩm:", error);
-      message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
-    }
   };
   //reload after click save change
   const reload = () => {
@@ -221,6 +212,7 @@ const AddProduct: React.FC = () => {
           fileList={fileList}
           onPreview={handlePreview}
           onChange={handleChange}
+          onRemove={handleRemoveImage}
           accept=".png,.jpg,.jpeg"
           beforeUpload={() => false} // ngăn không tự động tải lên
         >
@@ -240,11 +232,11 @@ const AddProduct: React.FC = () => {
       </div>
       <div className="action-button">
         <Button onClick={reload}>Cancel</Button>
-        <Button type="primary" onClick={createProduct}>
+        <Button type="primary" onClick={saveProduct}>
           Save
         </Button>
       </div>
     </div>
   );
 };
-export default AddProduct;
+export default UpdateProduct;
