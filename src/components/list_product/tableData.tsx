@@ -17,10 +17,12 @@ export interface productType {
 }
 interface ColumnProps {
   handleDelete: (id: string) => void;
+  handleUpdate: (id: string) => void;
 }
 
 export const productColumns = ({
   handleDelete,
+  handleUpdate,
 }: ColumnProps): TableProps<productType>["columns"] => [
   {
     title: "Image",
@@ -52,17 +54,33 @@ export const productColumns = ({
     title: "Status",
     dataIndex: "status",
     key: "status",
-    render: (status: boolean) => (status ? 'Active' : 'Disabled'),
+    render: (status: boolean) => (status ? "Active" : "Disabled"),
   },
   {
     title: "Action",
     dataIndex: "action",
     key: "action",
+    align: 'center',
     render: (_, row: productType) => (
-      <Popconfirm title="Sure to delete?" onConfirm={() => {
-        handleDelete(row._id)}}>
-        <Button>Delete</Button>
-      </Popconfirm>
+      <>
+        <div style={{display: 'flex', gap: '15px', justifyContent: 'center'}}>
+          <Button
+            onClick={() => {
+              handleUpdate(row._id);
+            }}
+          >
+            Update
+          </Button>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => {
+              handleDelete(row._id);
+            }}
+          >
+            <Button>Delete</Button>
+          </Popconfirm>
+        </div>
+      </>
     ),
   },
 ];
@@ -70,11 +88,18 @@ export const productColumns = ({
 interface ProductTableProps {
   data: productType[];
   handleDelete: (id: string) => void;
+  handleUpdate: (id: string) => void;
 }
-const TableData: React.FC<ProductTableProps> = ({ data, handleDelete }) => {
-  const columns = productColumns({ handleDelete });
+const TableData: React.FC<ProductTableProps> = ({
+  data,
+  handleDelete,
+  handleUpdate,
+}) => {
+  const columns = productColumns({ handleDelete, handleUpdate });
 
-  return <Table<productType> columns={columns} dataSource={data} rowKey="_id" />;
+  return (
+    <Table<productType> columns={columns} dataSource={data} rowKey="_id" />
+  );
 };
 
 export default TableData;

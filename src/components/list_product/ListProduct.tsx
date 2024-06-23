@@ -3,7 +3,6 @@ import "./ListProduct.css";
 import { Select } from "antd";
 import { axiosGet, axiosDelete } from "../../utils/axiosUtils";
 import TableData from "./tableData";
-import type {productType} from "./tableData";
 
 interface Product {
   _id: string,
@@ -21,9 +20,8 @@ interface Product {
 }
 
 const ListProduct: React.FC = () => {
+  
   const [allproducts, setAllProducts] = useState<Product[]>([]);
-
-
   const getAllProduct = async () => {
     try {
       const res = await axiosGet("all-product");
@@ -35,7 +33,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductSport = async () => {
     try {
-      const res = await axiosGet("product/sport-bike");
+      const res = await axiosGet("sport-bike");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -44,7 +42,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductNaked = async () => {
     try {
-      const res = await axiosGet("product/naked-bike");
+      const res = await axiosGet("naked-bike");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -53,7 +51,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductAdventure = async () => {
     try {
-      const res = await axiosGet("product/adventure");
+      const res = await axiosGet("adventure");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -62,7 +60,7 @@ const ListProduct: React.FC = () => {
   };
   const getProductClassic = async () => {
     try {
-      const res = await axiosGet("product/classic");
+      const res = await axiosGet("classic");
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
@@ -79,6 +77,14 @@ const ListProduct: React.FC = () => {
       console.error("Delete Fail", error);
     }
   };
+  const updateProduct = async () => {
+    try {
+      console.log('update product');
+    } catch (error) {
+      console.error("Delete Fail", error);
+    }
+  }
+  
   useEffect(() => {
     getAllProduct();
   }, []);
@@ -117,7 +123,7 @@ const ListProduct: React.FC = () => {
         </div>
       </div>
       <div className="listproduct-allproduct">
-          <TableData data={allproducts} handleDelete={deleteProduct}/>
+          <TableData data={allproducts} handleDelete={deleteProduct} handleUpdate={updateProduct}/>
       </div>
     </div>
   );

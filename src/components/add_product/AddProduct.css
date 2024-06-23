@@ -33,6 +33,8 @@
     gap: 67px;
 }
 .action-button{
+    display: flex;
+    gap: 15px;
     padding-top: 50px;
 }
 @media (max-width: 800px) {

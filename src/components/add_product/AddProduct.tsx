@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddProduct.css";
 import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import axios from "axios";
+
+type FORM_TYPE = "create" | "update";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -28,6 +30,7 @@ interface Product {
 }
 const AddProduct: React.FC = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [formType, setFormType] = useState<FORM_TYPE>("create");
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [product, setProduct] = useState<Product>({
@@ -62,7 +65,20 @@ const AddProduct: React.FC = () => {
   };
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
+  //Logic delete image when update
+  const handleRemoveImage = async (file: UploadFile) => {
+    if (file.url) {
+        try {
+            const filename = file.url.split('/').pop();
+            await axios.delete(`http://localhost:4000/api/images/${filename}`);
+        } catch (error) {
+            console.error('Failed to delete image:', error);
+            message.error('Failed to delete image');
+        }
+    }
+};
 
+  //Logic create product
   const createProduct = async () => {
     const formData = new FormData();
     fileList.forEach((file) => {
@@ -93,17 +109,57 @@ const AddProduct: React.FC = () => {
       message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
-
+  //logic save product
+  const updateProduct = () => {};
+  //save change
+  const saveProduct = async () => {
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append("product", file.originFileObj as File);
+    });
+    if (formType === "create") {
+      try {
+        const uploadImage = await axios.post(
+          "http://localhost:4000/api/products/upload",
+          formData
+        );
+        const imageUrls = uploadImage.data.imageUrls;
+        const productData = {
+          ...product,
+          image: JSON.parse(JSON.stringify(imageUrls)),
+        };
+        const createProduct = await axios.post(
+          "http://localhost:4000/api/products/",
+          productData
+        );
+        if (createProduct.data.success) {
+          message.success("Tạo sản phẩm thành công!");
+        } else {
+          message.error("Tạo sản phẩm thất bại!");
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải ảnh lên hoặc tạo sản phẩm:", error);
+        message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    } else if (formType === "update") {
+      await updateProduct();
+    }
+  };
+  //reload after click save change
+  const reload = () => {
+    console.log("Reload....");
+  };
   const uploadButton = (
     <div>
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Tải lên</div>
     </div>
   );
+
   return (
     <div className="add-product">
       <div className="addproduct-itemfield">
-        <p>Input Name</p>
+        <p>Name</p>
         <input
           type="text"
           name="name"
@@ -114,7 +170,7 @@ const AddProduct: React.FC = () => {
       <Row className="row-setup">
         <Col span={7}>
           <div className="addproduct-itemfield">
-            <p>Input Odo</p>
+            <p>Odo</p>
             <input
               type="text"
               name="odo"
@@ -125,7 +181,7 @@ const AddProduct: React.FC = () => {
         </Col>
         <Col span={7}>
           <div className="addproduct-itemfield">
-            <p>Input Model</p>
+            <p>Model</p>
             <input
               type="text"
               name="model"
@@ -136,7 +192,7 @@ const AddProduct: React.FC = () => {
         </Col>
         <Col span={7}>
           <div className="addproduct-itemfield">
-            <p>Input Brand</p>
+            <p>Brand</p>
             <input
               type="text"
               name="brand"
@@ -147,7 +203,7 @@ const AddProduct: React.FC = () => {
         </Col>
       </Row>
       <div className="addproduct-itemfield">
-        <p>Input Color</p>
+        <p>Color</p>
         <input
           type="text"
           name="color"
@@ -157,7 +213,7 @@ const AddProduct: React.FC = () => {
       </div>
 
       <div className="addproduct-itemfield">
-        <p>Input Option</p>
+        <p>Option</p>
         <TextArea
           rows={2}
           name="option"
@@ -166,7 +222,7 @@ const AddProduct: React.FC = () => {
         />
       </div>
       <div className="addproduct-itemfield">
-        <p>Input Description</p>
+        <p>Description</p>
         <TextArea
           rows={2}
           name="description"
@@ -177,7 +233,7 @@ const AddProduct: React.FC = () => {
       <Row>
         <Col span={12}>
           <div className="addproduct-itemfield">
-            <p>Input Category</p>
+            <p>Category</p>
             <Select
               className="add-product-selector"
               defaultValue="sport-bike"
@@ -195,7 +251,7 @@ const AddProduct: React.FC = () => {
         </Col>
         <Col span={12}>
           <div className="addproduct-itemfield">
-            <p>Input Price</p>
+            <p>Price</p>
             <input
               type="text"
               name="price"
@@ -207,7 +263,7 @@ const AddProduct: React.FC = () => {
       </Row>
       {/* Logic upload image o day */}
       <div className="addproduct-itemfield">
-        <p>Upload Image</p>
+        <p>Image</p>
         <Upload
           multiple
           maxCount={12}
@@ -215,6 +271,7 @@ const AddProduct: React.FC = () => {
           fileList={fileList}
           onPreview={handlePreview}
           onChange={handleChange}
+          onRemove={handleRemoveImage}
           accept=".png,.jpg,.jpeg"
           beforeUpload={() => false} // ngăn không tự động tải lên
         >
@@ -233,7 +290,8 @@ const AddProduct: React.FC = () => {
         )}
       </div>
       <div className="action-button">
-        <Button type="primary" onClick={createProduct}>
+        <Button onClick={reload}>Cancel</Button>
+        <Button type="primary" onClick={saveProduct}>
           Save
         </Button>
       </div>

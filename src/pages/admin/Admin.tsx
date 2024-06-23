@@ -11,6 +11,7 @@ const Admin: React.FC = () => {
             <Sidebar />
             <Routes>
                 <Route path='/add-product' element={< AddProduct/>}/>
+                <Route path='/update-product' element={< AddProduct/>}/>
                 <Route path='/list-product' element={< ListProduct/>}/>
                 <Route path='/add-blog' element={< AddBlog/>}/>
             </Routes>
