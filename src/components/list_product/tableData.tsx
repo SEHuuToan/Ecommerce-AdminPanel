@@ -97,7 +97,7 @@ const TableData: React.FC<ProductTableProps> = ({
   const columns = productColumns({ handleDelete, handleUpdate });
 
   return (
-    <Table<productType> columns={columns} dataSource={data} rowKey="_id" />
+    <Table<productType> columns={columns} dataSource={data} rowKey="_id"/>
   );
 };
 

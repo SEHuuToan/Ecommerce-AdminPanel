@@ -36,7 +36,10 @@
     width: 80%;
     gap: 5px;
 }
-
+.loading-spin{
+    height: 100%; /* chiều cao của loading-spin sẽ căn giữa theo chiều dọc */
+    width: 100%;
+}
 
 .productlist-image{
     width: 220px;
