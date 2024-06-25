@@ -4,6 +4,8 @@ import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import axios from "axios";
+import { axiosGet } from "../../utils/axiosUtils";
+import { useParams } from "react-router-dom";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -23,10 +25,11 @@ interface Product {
   option: string;
   description: string;
   category: string;
-  image: [];
+  image: string[];
   price: number;
 }
 const UpdateProduct: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -65,26 +68,108 @@ const UpdateProduct: React.FC = () => {
   //Logic delete image when update
   const handleRemoveImage = async (file: UploadFile) => {
     if (file.url) {
-        try {
-            const filename = file.url.split('/').pop();
-            await axios.delete(`http://localhost:4000/api/images/${filename}`);
-        } catch (error) {
-            console.error('Failed to delete image:', error);
-            message.error('Failed to delete image');
+      try {
+        const filename = file.url.split("/").pop();
+        const res = await axios.delete(
+          `http://localhost:4000/api/products/images/${filename}`
+        );
+        if (res.data.success) {
+          message.success("Image deleted successfully");
+          setFileList((prevFileList) =>
+            prevFileList.filter((item) => item.uid !== file.uid)
+          );
+          setProduct((prevProduct) => ({
+            ...prevProduct,
+            image: prevProduct.image.filter((img) => img !== file.url),
+          }));
+        } else {
+          message.error("Failed to delete image");
         }
+      } catch (error) {
+        console.error("Failed to delete image:", error);
+        message.error("Failed to delete image");
+      }
     }
-};
-
+  };
+  const handleGetDataProduct = async () => {
+    try {
+      const res = await axiosGet(`${id}`);
+      setProduct(res.data);
+      setFileList(
+        res.data.image.map((img: string, index: number) => ({
+          uid: index,
+          url: img,
+          status: "done",
+        }))
+      );
+    } catch (error) {
+      message.error("Can't found this product");
+    }
+  };
   //logic save product
-  const updateProduct = () => {};
-  //save change
   const saveProduct = async () => {
+    console.log("Saving product with ID:", id); // Check if id is correct
     const formData = new FormData();
-    fileList.forEach((file) => {
+    // Lọc các file mới được tải lên (không có `url`)
+    const newFiles = fileList.filter((file) => !file.url);
+    const removedFiles = product.image.filter(
+      (img) => !fileList.some((file) => file.url === img)
+    );
+    if (newFiles.length === 0 && removedFiles.length === 0) {
+      const productData = {
+        ...product,
+        image: product.image, // No change in images
+      };
+      try {
+        const updateProduct = await axios.put(
+          `http://localhost:4000/api/products/update-product/${id}`,
+          productData
+        );
+        if (updateProduct.data.success) {
+          message.success("Cập nhật sản phẩm thành công!");
+        } else {
+          message.error("Cập nhật sản phẩm thất bại!");
+        }
+      } catch (error) {
+        message.error("Failed to update product");
+      }
+      return; // Exit the function early
+    }
+    newFiles.forEach((file) => {
       formData.append("product", file.originFileObj as File);
     });
-    await updateProduct();
+    try {
+      let imageUrls = product.image;
+      if (imageUrls.length > 0) {
+        const uploadImage = await axios.post(
+          "http://localhost:4000/api/products/upload",
+          formData
+        );
+        imageUrls = uploadImage.data.imageUrls;
+      }
+      const existingImageUrls = fileList
+        .filter((file) => file.url)
+        .map((file) => file.url);
 
+      const combinedImageUrls = [...existingImageUrls, ...imageUrls];
+
+      const productData = {
+        ...product,
+        image: combinedImageUrls,
+      };
+
+      const updateProduct = await axios.put(
+        `http://localhost:4000/api/products/update-product/${id}`,
+        productData
+      );
+      if (updateProduct.data.success) {
+        message.success("Cập nhật sản phẩm thành công!");
+      } else {
+        message.error("Cập nhật sản phẩm thất bại!");
+      }
+    } catch (error) {
+      message.error("Failed to update product");
+    }
   };
   //reload after click save change
   const reload = () => {
@@ -96,7 +181,9 @@ const UpdateProduct: React.FC = () => {
       <div style={{ marginTop: 8 }}>Tải lên</div>
     </div>
   );
-
+  useEffect(() => {
+    handleGetDataProduct();
+  }, [id]);
   return (
     <div className="add-product">
       <div className="addproduct-itemfield">
