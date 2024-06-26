@@ -17,6 +17,7 @@ const getBase64 = (file: FileType): Promise<string> =>
   });
 const { TextArea } = Input;
 interface Product {
+  _id: string;
   name: string;
   odo: string;
   color: string;
@@ -34,6 +35,7 @@ const UpdateProduct: React.FC = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [product, setProduct] = useState<Product>({
+    _id:"",
     name: "",
     odo: "",
     color: "",
@@ -66,16 +68,14 @@ const UpdateProduct: React.FC = () => {
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   }
+  
   //Logic delete image when update
   const handleRemoveImage = async (file: UploadFile) => {
     if (file.url) {
       try {
         const filename = file.url.split("/").pop();
-        const res = await axios.delete(
-          `http://localhost:4000/api/products/images/${filename}`
-        );
+        const res = await axios.delete(`http://localhost:4000/api/products/images/${id}/${filename}`);
         if (res.data.success) {
-          message.success("Image deleted successfully");
           setFileList((prevFileList) =>
             prevFileList.filter((item) => item.uid !== file.uid)
           );
@@ -119,10 +119,7 @@ const UpdateProduct: React.FC = () => {
     // Kiểm tra nếu không có thay đổi nào đối với hình ảnh
     if (newFiles.length === 0 && removedFiles.length === 0) {
       try {
-        const updateProduct = await axios.put(
-          `http://localhost:4000/api/products/update-product/${id}`,
-          product
-        );
+        const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`,product);
         if (updateProduct.data.success) {
           message.success("Cập nhật sản phẩm thành công!");
         } else {
@@ -131,7 +128,7 @@ const UpdateProduct: React.FC = () => {
       } catch (error) {
         message.error("Failed to update product");
       }
-      return; // Thoát khỏi hàm
+      return;
     }
     // Thêm các file mới vào formData
     newFiles.forEach((file) => {
@@ -141,10 +138,7 @@ const UpdateProduct: React.FC = () => {
       let imageUrls = product.image;
       // Nếu có tệp tin mới, tải lên và nhận URL hình ảnh mới
       if (newFiles.length > 0) {
-        const uploadImage = await axios.post(
-          "http://localhost:4000/api/products/upload",
-          formData
-        );
+        const uploadImage = await axios.post("http://localhost:4000/api/products/upload",formData);
         imageUrls = uploadImage.data.imageUrls;
       }
       // Lấy các URL hình ảnh hiện có từ fileList
@@ -159,10 +153,7 @@ const UpdateProduct: React.FC = () => {
         image: combinedImageUrls,
       };
       // Cập nhật sản phẩm
-      const updateProduct = await axios.put(
-        `http://localhost:4000/api/products/update-product/${id}`,
-        productData
-      );
+      const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`,productData);
       if (updateProduct.data.success) {
         message.success("Cập nhật sản phẩm thành công!");
       } else {
