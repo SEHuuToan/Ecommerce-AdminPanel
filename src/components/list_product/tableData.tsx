@@ -23,7 +23,6 @@ interface ColumnProps {
 
 export const productColumns = ({
   handleDelete,
-  handleUpdate,
 }: ColumnProps): TableProps<productType>["columns"] => [
   {
     title: "Image",

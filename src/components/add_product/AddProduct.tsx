@@ -68,30 +68,21 @@ const AddProduct: React.FC = () => {
   const createProduct = async () => {
     const formData = new FormData();
     fileList.forEach((file) => {
-      formData.append("product", file.originFileObj as File);
+      formData.append("images", file.originFileObj as File);
     });
-
+    // Append product data
+    formData.append("product", JSON.stringify(product));
     try {
-      const uploadImage = await axios.post(
-        "http://localhost:4000/api/products/upload",
-        formData
-      );
-      const imageUrls = uploadImage.data.imageUrls;
-      const productData = {
-        ...product,
-        image: JSON.parse(JSON.stringify(imageUrls)),
-      };
-      const createProduct = await axios.post(
-        "http://localhost:4000/api/products/",
-        productData
-      );
+      const createProduct = await axios.post("http://localhost:4000/api/products/create-product", formData,{headers: {
+        'Content-Type': 'multipart/form-data'
+      }});
       if (createProduct.data.success) {
         message.success("Tạo sản phẩm thành công!");
       } else {
         message.error("Tạo sản phẩm thất bại!");
       }
     } catch (error) {
-      console.error("Lỗi khi tải ảnh lên hoặc tạo sản phẩm:", error);
+      console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
       message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };

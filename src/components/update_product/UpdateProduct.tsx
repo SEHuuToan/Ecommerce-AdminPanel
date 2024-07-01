@@ -5,8 +5,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import axios from "axios";
 import { axiosGet } from "../../utils/axiosUtils";
-import { useParams } from "react-router-dom";
-
+import { Router, useParams } from "react-router-dom";
+import LoadingSpin from '../spin/LoadingSpin';
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -30,6 +30,7 @@ interface Product {
   price: number;
 }
 const UpdateProduct: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
@@ -109,95 +110,36 @@ const UpdateProduct: React.FC = () => {
       message.error("Can't found this product");
     }
   };
-  const saveProduct2 = async () => {
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      if (!file.url && file.originFileObj) {
-        // Chỉ thêm các file mới
-        formData.append("images", file.originFileObj);
-      }
-    });
-    const productData = {
-      ...product,
-    };
-    try {
-      const res = await axios.put(`http://localhost:4000/api/products/update-product/${id}`,productData);
-      if (res.data.success) {
-        message.success("Cập nhật sản phẩm thành công!");
-      }
-    } catch (error) {
-      message.error("Cập nhật sản phẩm thất bại!");
-    }
-  };
-  //logic save product
   const saveProduct = async () => {
-    const formData = new FormData();
-    // Lọc các file mới được tải lên (không có `url`)
-    const newFiles = fileList.filter((file) => !file.url);
-    // Lọc các file đã bị xóa
-    const removedFiles = product.image.filter(
-      (img) => !fileList.some((file) => file.url === img)
-    );
-    // Kiểm tra nếu không có thay đổi nào đối với hình ảnh
-    if (newFiles.length === 0 && removedFiles.length === 0) {
+    setLoading(true)
+    setTimeout(async() => {
+      const formData = new FormData();
+      const newFiles = fileList.filter((file) => !file.url);
+      // Thêm các file mới vào formData
+      newFiles.forEach((file) => {
+        formData.append("images", file.originFileObj as File);
+      });
+      formData.append("product", JSON.stringify(product));
       try {
-        const updateProduct = await axios.put(
-          `http://localhost:4000/api/products/update-product/${id}`,
-          product
-        );
+        const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          }
+        })
         if (updateProduct.data.success) {
+          handleGetDataProduct();
           message.success("Cập nhật sản phẩm thành công!");
         } else {
           message.error("Cập nhật sản phẩm thất bại!");
         }
       } catch (error) {
-        message.error("Failed to update product");
+        console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
+        message.warning("Bạn không thay đổi bất kì giá trị nào!");
       }
-      return;
-    }
-    // Thêm các file mới vào formData
-    newFiles.forEach((file) => {
-      formData.append("product", file.originFileObj as File);
-    });
-    try {
-      let imageUrls = product.image;
-      // Nếu có tệp tin mới, tải lên và nhận URL hình ảnh mới
-      if (newFiles.length > 0) {
-        const uploadImage = await axios.post(
-          "http://localhost:4000/api/products/upload",
-          formData
-        );
-        imageUrls = uploadImage.data.imageUrls;
-      }
-      // Lấy các URL hình ảnh hiện có từ fileList
-      const existingImageUrls = fileList
-        .filter((file) => file.url)
-        .map((file) => file.url);
-      // Kết hợp các URL hình ảnh hiện có và mới
-      const combinedImageUrls = [...existingImageUrls, ...imageUrls];
-      // Tạo dữ liệu sản phẩm mới
-      const productData = {
-        ...product,
-        image: combinedImageUrls,
-      };
-      // Cập nhật sản phẩm
-      const updateProduct = await axios.put(
-        `http://localhost:4000/api/products/update-product/${id}`,
-        productData
-      );
-      if (updateProduct.data.success) {
-        message.success("Cập nhật sản phẩm thành công!");
-      } else {
-        message.error("Cập nhật sản phẩm thất bại!");
-      }
-    } catch (error) {
-      message.error("Failed to update product");
-    }
+      setLoading(false);
+    }, 800)
   };
   //reload after click save change
-  const reload = () => {
-    console.log("Reload....");
-  };
   const uploadButton = (
     <div>
       <PlusOutlined />
@@ -208,7 +150,9 @@ const UpdateProduct: React.FC = () => {
     handleGetDataProduct();
   }, [id]);
   return (
+  
     <div className="add-product">
+        <LoadingSpin spinning={loading}>
       <div className="addproduct-itemfield">
         <p>Name</p>
         <input
@@ -341,12 +285,14 @@ const UpdateProduct: React.FC = () => {
         )}
       </div>
       <div className="action-button">
-        <Button onClick={reload}>Cancel</Button>
-        <Button type="primary" onClick={saveProduct2}>
+        <Button onClick={handleGetDataProduct}>Cancel</Button>
+        <Button type="primary" onClick={saveProduct}>
           Save
         </Button>
       </div>
+      </LoadingSpin>
     </div>
   );
 };
+
 export default UpdateProduct;
