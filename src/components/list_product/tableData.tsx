@@ -28,9 +28,9 @@ export const productColumns = ({
     title: "Image",
     dataIndex: "image",
     key: "image",
-    render: (images: string[]) =>
+    render: (images: { url: string, public_id: string }[]) =>
       images.length > 0 ? (
-        <img src={images[0]} alt="product" style={{ width: 50 }} />
+        <img src={images[0].url} alt="product" style={{ width: 50 }} />
       ) : (
         "No Image"
       ),

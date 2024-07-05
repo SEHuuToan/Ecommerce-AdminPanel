@@ -98,14 +98,16 @@ const UpdateProduct: React.FC = () => {
   const handleGetDataProduct = async () => {
     try {
       const res = await axiosGet(`${id}`);
+      const {image} = res.data;
       setProduct(res.data);
       setFileList(
-        res.data.image.map((img: string, index: number) => ({
-          uid: index,
-          url: img,
-          status: "done",
+        image.map((img: { url: string, public_id: string }, index: number) => ({
+            uid: index,
+            url: img.url, // Sử dụng img.url làm URL hình ảnh
+            status: "done",
+            public_id: img.public_id // Thêm public_id vào danh sách file
         }))
-      );
+    );
     } catch (error) {
       message.error("Can't found this product");
     }
