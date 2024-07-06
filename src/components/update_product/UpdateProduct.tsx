@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import axios from "axios";
 import { axiosGet } from "../../utils/axiosUtils";
-import { Router, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LoadingSpin from '../spin/LoadingSpin';
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -123,11 +123,9 @@ const UpdateProduct: React.FC = () => {
       });
       formData.append("product", JSON.stringify(product));
       try {
-        const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          }
-        })
+        const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`, formData, {headers: {
+          'Content-Type': 'multipart/form-data'
+        }})
         if (updateProduct.data.success) {
           handleGetDataProduct();
           message.success("Cập nhật sản phẩm thành công!");

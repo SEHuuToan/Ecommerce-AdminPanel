@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./AddProduct.css";
 import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
