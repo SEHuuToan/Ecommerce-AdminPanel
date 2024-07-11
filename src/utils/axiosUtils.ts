@@ -1,14 +1,15 @@
 import axios from 'axios';
 
-const HOST = 'http://localhost:4000/api/products/'
+// const HOST = 'http://localhost:4000/api/products/'
+const HOST = import.meta.env.VITE_BASE_URL_LOCAL;
 
 const axiosGet = async (url: string) => {
-    const res = await axios.get(HOST + url)
+    const res = await axios.get(HOST+'api/products/'+ url)
     return res;
 }
 const axiosGetWithParams = async (url: string, params?: Record<string, any>) => {
     const p = new URLSearchParams(params)
-    const res = axios.get(HOST + url + '?' + p)
+    const res = axios.get(HOST+'api/products/'+ url + '?' + p)
     return res;
 }
 

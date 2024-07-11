@@ -73,7 +73,7 @@ const AddProduct: React.FC = () => {
     // Append product data
     formData.append("product", JSON.stringify(product));
     try {
-      const createProduct = await axios.post("http://localhost:4000/api/products/create-product", formData,{headers: {
+      const createProduct = await axios.post("http://192.168.1.7:4000/api/products/create-product", formData,{headers: {
         'Content-Type': 'multipart/form-data'
       }});
       if (createProduct.data.success) {

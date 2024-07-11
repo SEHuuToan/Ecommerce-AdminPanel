@@ -76,7 +76,7 @@ const UpdateProduct: React.FC = () => {
       try {
         const filename = file.url.split("/").pop();
         const res = await axios.delete(
-          `http://localhost:4000/api/products/images/${id}/${filename}`
+          `http://192.168.1.7:4000/api/products/images/${id}/${filename}`
         );
         if (res.data.success) {
           setFileList((prevFileList) =>
@@ -123,7 +123,7 @@ const UpdateProduct: React.FC = () => {
       });
       formData.append("product", JSON.stringify(product));
       try {
-        const updateProduct = await axios.put(`http://localhost:4000/api/products/update-product/${id}`, formData, {headers: {
+        const updateProduct = await axios.put(`http://192.168.1.7:4000/api/products/update-product/${id}`, formData, {headers: {
           'Content-Type': 'multipart/form-data'
         }})
         if (updateProduct.data.success) {
