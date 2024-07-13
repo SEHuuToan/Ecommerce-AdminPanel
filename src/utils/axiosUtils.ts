@@ -28,7 +28,7 @@ const axiosGetWithParams = async (url: string, params?: Record<string, any>) => 
 //     })
 // }
 const axiosDelete = async (id: string) => {
-    const res = await axios.delete(HOST+id);
+    const res = await axios.delete(HOST+'api/products/'+id);
     return res;
 }
 

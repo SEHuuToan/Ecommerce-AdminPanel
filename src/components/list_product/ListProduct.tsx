@@ -36,21 +36,18 @@ const ListProduct: React.FC = () => {
   };
   const deleteProduct = async (id: string) => {
     setLoading(true)
-    setTimeout(async () => {
-      try {
-        const res = await axiosDelete(`${id}`)
-        if (res.data.success) {
-          setAllProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
-          message.success("Xóa sản phẩm thành công!");
-        } else {
-          message.error("Failed to delete product");
-        }
-      } catch (error) {
+    try {
+      const res = await axiosDelete(`${id}`)
+      if (res.data.success) {
+        setAllProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        message.success("Xóa sản phẩm thành công!");
+      } else {
         message.error("Failed to delete product");
       }
-      setLoading(false);
-    }, 800);
-
+    } catch (error) {
+      message.error("Failed to delete product");
+    }
+    setLoading(false);
   };
   const updateProduct = async () => {
     try {

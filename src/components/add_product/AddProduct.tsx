@@ -4,6 +4,7 @@ import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import axios from "axios";
+import LoadingSpin from '../spin/LoadingSpin';
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -27,6 +28,7 @@ interface Product {
   price: number;
 }
 const AddProduct: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -66,6 +68,7 @@ const AddProduct: React.FC = () => {
 
   //Logic create product
   const createProduct = async () => {
+    setLoading(true);
     const formData = new FormData();
     fileList.forEach((file) => {
       formData.append("images", file.originFileObj as File);
@@ -85,6 +88,7 @@ const AddProduct: React.FC = () => {
       console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
       message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
+    setLoading(false);
   };
   //reload after click save change
   const reload = () => {
@@ -99,6 +103,7 @@ const AddProduct: React.FC = () => {
 
   return (
     <div className="add-product">
+      <LoadingSpin spinning={loading}>
       <div className="addproduct-itemfield">
         <p>Name</p>
         <input
@@ -235,6 +240,7 @@ const AddProduct: React.FC = () => {
           Save
         </Button>
       </div>
+      </LoadingSpin>
     </div>
   );
 };
