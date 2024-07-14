@@ -13,24 +13,24 @@ const SignUp: React.FC = () => {
         username: '',
         password: '',
     });
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setUser((prevUser) => ({ ...prevUser, [name]: value }));
     };
     const handleSignUpAccount = async () => {
-        const formData = new FormData();
-        formData.append("user", JSON.stringify(user))
         try {
-            const resultLogin = await axios.post("http://192.168.1.7:4000/sign-up", formData);
-            if (resultLogin.data.success) {
-                message.success("Dang nhap thành công!");
+            const resultSignup = await axios.post("http://192.168.1.24:4000/sign-up", user, {
+                headers:{
+                    "Content-Type": "application/json"
+                }
+            });
+            if (resultSignup.data.__v === 0) {
+                message.success("Tao moi thành công!");
             } else {
-                message.error("Dang nhap thất bại!");
+                message.error("Tao moi thất bại!");
             }
         } catch (error) {
-            message.error("Đã xảy ra lỗi. Vui lòng Thu dang nhap lai");
+            message.error("Đã xảy ra lỗi. Vui lòng Thu lai");
         }
     }
     return (
