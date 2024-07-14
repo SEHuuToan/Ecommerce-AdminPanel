@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, message } from 'antd';
 import './css/SignUp.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 interface User {
@@ -9,6 +9,7 @@ interface User {
     password: string,
 }
 const SignUp: React.FC = () => {
+    const navigate = useNavigate();
     const [user, setUser] = useState<User>({
         username: '',
         password: '',
@@ -19,13 +20,14 @@ const SignUp: React.FC = () => {
     };
     const handleSignUpAccount = async () => {
         try {
-            const resultSignup = await axios.post("http://192.168.1.24:4000/sign-up", user, {
+            const resultSignup = await axios.post("http://192.168.1.7:4000/sign-up", user, {
                 headers:{
                     "Content-Type": "application/json"
                 }
             });
             if (resultSignup.data.__v === 0) {
                 message.success("Tao moi thành công!");
+                navigate("/login")
             } else {
                 message.error("Tao moi thất bại!");
             }

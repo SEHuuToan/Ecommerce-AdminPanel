@@ -1,0 +1,9 @@
+.admin-page{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.admin-container{
+    display: flex;
+    width: 100%;
+}

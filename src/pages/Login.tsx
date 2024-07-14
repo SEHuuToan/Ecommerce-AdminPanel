@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   const handleSubmitLogin = async () => {
     try {
       const resultLogin = await axios.post(
-        "http://192.168.1.24:4000/login", user, {
+        "http://192.168.1.7:4000/login", user, {
             headers:{
                 "Content-Type": "application/json"
             }
