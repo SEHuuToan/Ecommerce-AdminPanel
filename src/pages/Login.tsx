@@ -11,6 +11,7 @@ interface User {
 }
 const Login: React.FC = () => {
   const login = useAuthStore((state) => state.login);
+  
   const navigate = useNavigate();
   const [user, setUser] = useState<User>({
     username: "",
@@ -31,9 +32,10 @@ const Login: React.FC = () => {
             }
         }
       );
-      
-      if (resultLogin.data === true) {
-        login(user.username);
+      const {username, token} = resultLogin.data //lay token duoc truyen tu BE len FE
+      if (token) {
+        login(username, token); //truyen token vao store
+        localStorage.setItem("token", token);
         navigate("/");
         message.success("Dang nhap thành công!");
 
