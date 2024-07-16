@@ -13,6 +13,7 @@ import ProtectedRoutes from "./utils/ProtectedRoutes";
 // import useAuthStore from './stores/userInformationStore';
 import CommonLayout from "./layoutElement/CommonLayout";
 import AdminLayout from "./layoutElement/AdminLayout";
+import ErrorPage from "./pages/ErrorPage";
 const App: React.FC = () => {
   // const {isAuthenticated} = useAuthStore();
   return (
@@ -60,6 +61,7 @@ const App: React.FC = () => {
                 {<Route path="/add-blog" element={<AddBlog />} />}
               </Route>
             </Route>
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
       </div>

@@ -14,10 +14,28 @@
     height: 78px;
 }
 .nav-profile{
-    width: 68px;
-    height: 68px;
+    width: 58px;
+    height: 58px;
+    cursor: pointer;
 }
-
+.nav-profile-container{
+    display: flex;
+    flex-direction:  column;
+}
+.navbar-view-profile{
+    width: 120px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #0307fc;
+}
+.navbar-logout{
+    width: 120px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fc1c03;
+}
 @media (max-width: 800px) {
     .navbar{
         padding: 5px 10px;

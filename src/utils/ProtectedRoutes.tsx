@@ -1,19 +1,19 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import useAuthStore from "../stores/userInformationStore";
 
 const ProtectedRoutes: React.FC = () => {
     const { isAuthenticated, login } = useAuthStore();
     const token = localStorage.getItem("token");
-
+    console.log("token", token)
     const handleDecodeToken = () => {
-        if(token){
+        if (token) {
             try {
                 const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Giải mã token
-                if(decodedToken){
+                if (decodedToken) {
                     const username = decodedToken.username; // Lấy username từ decodedToken
                     login(username, token); // Đăng nhập với username và token
-                }else{
+                } else {
                     console.error("Invalid token format");
                 }
             } catch (error) {
@@ -24,9 +24,13 @@ const ProtectedRoutes: React.FC = () => {
     useEffect(() => {
         handleDecodeToken();
     }, [])
-    if(!token){
-        return isAuthenticated ? <Outlet/> : <Navigate to="/login" />
-
+    if (isAuthenticated === true || token != null) {
+        return <Outlet />
+    } else {
+        return <Navigate to="/login" />
     }
+
+
+
 }
 export default ProtectedRoutes;
