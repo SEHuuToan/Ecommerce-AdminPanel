@@ -20,10 +20,10 @@ const Sidebar: React.FC = () => {
           <p>List Product</p>
         </div>
       </Link>
-      <Link to={"/add-blog"} style={{ textDecoration: "none" }}>
+      <Link to={"/list-blog"} style={{ textDecoration: "none" }}>
         <div className="sidebar-blog">
           <img src={addBlog} style={{width: '24px', height: '24px'}} alt="add_blog"/>
-          <p>Add Blog</p>
+          <p>Manage Blog</p>
         </div>
       </Link>
     </div>

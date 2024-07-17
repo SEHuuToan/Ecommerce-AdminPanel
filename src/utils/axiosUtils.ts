@@ -4,12 +4,12 @@ import axios from 'axios';
 const HOST = import.meta.env.VITE_BASE_URL_LOCAL;
 
 const axiosGet = async (url: string) => {
-    const res = await axios.get(HOST+'api/products/'+ url)
+    const res = await axios.get(HOST + 'api/products/' + url)
     return res;
 }
 const axiosGetWithParams = async (url: string, params?: Record<string, any>) => {
     const p = new URLSearchParams(params)
-    const res = axios.get(HOST+'api/products/'+ url + '?' + p)
+    const res = axios.get(HOST + 'api/products/' + url + '?' + p)
     return res;
 }
 
@@ -28,14 +28,25 @@ const axiosGetWithParams = async (url: string, params?: Record<string, any>) => 
 //     })
 // }
 const axiosDelete = async (id: string) => {
-    const res = await axios.delete(HOST+'api/products/'+id);
+    const res = await axios.delete(HOST + 'api/' + id);
     return res;
 }
-
+// Blog axios
+const axiosGetBlog = async (url: string) => {
+    const res = await axios.get(HOST+ 'api/' + url)
+    return res;
+}
+const axiosDeleteBlog = async (id: string) => {
+    const res = await axios.delete(HOST+ 'api/' + id);
+    return res;
+}
 export {
     axiosGet,
     axiosGetWithParams,
     // axiosPost,
     // axiosPut,
     axiosDelete,
+    // Blog axios
+    axiosGetBlog,
+    axiosDeleteBlog
 }

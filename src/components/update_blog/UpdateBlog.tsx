@@ -1,10 +1,9 @@
 import React, { useState } from "react"
-import './AddBlog.css'
-import { Input, Upload, Image, Button, message } from 'antd';
+import './UpdateBlog.css'
+import { Input, Upload, Image, } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import useBlogStore from '../../stores/blogStore';
-import axios from "axios";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -14,30 +13,28 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 const { TextArea } = Input;
-interface Blog {
-    title: string;
-    header: string;
-    body1: string;
-    body2: string;
-    body3: string;
-    footer: string;
-    image: [];
-    status: boolean;
-}
+
 const AddBlog: React.FC = () => {
+    const {
+        title,
+        header,
+        body1,
+        body2,
+        body3,
+        footer,
+        image,
+        setTitle,
+        setHeader,
+        setBody1,
+        setBody2,
+        setBody3,
+        setImage,
+        setFooter,
+    } = useBlogStore();
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [blog, setBlog] = useState<Blog>({
-        title: "",
-        header: "",
-        body1: "",
-        body2: "",
-        body3: "",
-        footer: "",
-        image: [],
-        status: true,
-    });
+
     const uploadButton = (
         <div>
             <PlusOutlined />
@@ -54,35 +51,35 @@ const AddBlog: React.FC = () => {
     };
     const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
         setFileList(newFileList);
+        setImage(image);
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        setBlog((prevProduct) => ({ ...prevProduct, [name]: value }));
-    };
-    const createBlog = async () => {
-        const formData = new FormData();
-        fileList.forEach((file) => {
-            formData.append("images", file.originFileObj as File);
-        });
-        formData.append("blog", JSON.stringify(blog))
-        try {
-            const result = await axios.post("http://192.168.1.7:4000/api/add-blog", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if (result.data.success) {
-                message.success("Tạo blog thành công!");
-            } else {
-                message.error("Tạo blog thất bại!");
-            }
-            // setOpenModal(false);
-        } catch (error) {
-            console.error("Failed to create blog", error);
-            // setOpenModal(false);
+        switch (name) {
+            case 'title':
+                setTitle(value);
+                break;
+            case 'header':
+                setHeader(value);
+                break;
+            case 'body1':
+                setBody1(value);
+                break;
+            case 'body2':
+                setBody2(value);
+                break;
+            case 'body3':
+                setBody3(value);
+                break;
+            case 'footer':
+                setFooter(value);
+                break;
+            default:
+                break;
         }
-    }
+    };
+
     return (
         <div className="add-blog">
             <h3>Add Blog</h3>
@@ -92,7 +89,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={1}
                         name="title"
-                        value={blog.title}
+                        value={title}
                         onChange={handleInputChange}
 
                     />
@@ -102,7 +99,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={1}
                         name="header"
-                        value={blog.header}
+                        value={header}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -111,7 +108,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={4}
                         name="body1"
-                        value={blog.body1}
+                        value={body1}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -120,7 +117,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={4}
                         name="body2"
-                        value={blog.body2}
+                        value={body2}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -129,7 +126,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={4}
                         name="body3"
-                        value={blog.body3}
+                        value={body3}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -138,7 +135,7 @@ const AddBlog: React.FC = () => {
                     <TextArea
                         rows={2}
                         name="footer"
-                        value={blog.footer}
+                        value={footer}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -167,12 +164,6 @@ const AddBlog: React.FC = () => {
                             src={previewImage}
                         />
                     )}
-                </div>
-                <div className="action-button">
-                    <Button>Cancel</Button>
-                    <Button type="primary" onClick={createBlog}>
-                        Save
-                    </Button>
                 </div>
             </div>
         </div>

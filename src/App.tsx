@@ -7,6 +7,8 @@ import SignUp from "./pages/SignUp";
 import AddProduct from "./components/add_product/AddProduct";
 import UpdateProduct from "./components/update_product/UpdateProduct";
 import AddBlog from "./components/add_blog/AddBlog";
+import UpdateBlog from "./components/update_blog/UpdateBlog";
+import ListBlog from "./components/list_blog/ListBlog";
 import ListProduct from "./components/list_product/ListProduct";
 import Home from "./pages/Home";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
@@ -59,6 +61,9 @@ const App: React.FC = () => {
                 }
                 {<Route path="/list-product" element={<ListProduct />} />}
                 {<Route path="/add-blog" element={<AddBlog />} />}
+                {<Route path="/list-blog" element={<ListBlog />} />}
+                {<Route path="/update-blog/:id" element={<UpdateBlog />} />}
+
               </Route>
             </Route>
             <Route path="*" element={<ErrorPage />} />
