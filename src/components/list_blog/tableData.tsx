@@ -36,27 +36,13 @@ export const productColumns = ({
             title: "Title",
             dataIndex: "title",
             key: "title",
+            ellipsis: true
         },
         {
             title: "Header",
             dataIndex: "header",
             key: "header",
-        },
-        {
-            title: "Body",
-            dataIndex: "body",
-            key: "body",
-        },
-        {
-            title: "Footer",
-            dataIndex: "footer",
-            key: "footer",
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            key: "status",
-            render: (status: boolean) => (status ? "Active" : "Disabled"),
+            ellipsis: true
         },
         {
             title: "Action",

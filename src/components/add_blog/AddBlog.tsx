@@ -2,8 +2,9 @@ import React, { useState } from "react"
 import './AddBlog.css'
 import { Input, Upload, Image, Button, message } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from "antd";
+import LoadingSpin from '../spin/LoadingSpin';
 import { PlusOutlined } from '@ant-design/icons';
-import useBlogStore from '../../stores/blogStore';
+// import useBlogStore from '../../stores/blogStore';
 import axios from "axios";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -25,6 +26,7 @@ interface Blog {
     status: boolean;
 }
 const AddBlog: React.FC = () => {
+    const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -61,13 +63,14 @@ const AddBlog: React.FC = () => {
         setBlog((prevProduct) => ({ ...prevProduct, [name]: value }));
     };
     const createBlog = async () => {
+        setLoading(true)
         const formData = new FormData();
         fileList.forEach((file) => {
             formData.append("images", file.originFileObj as File);
         });
         formData.append("blog", JSON.stringify(blog))
         try {
-            const result = await axios.post("http://192.168.1.7:4000/api/add-blog", formData, {
+            const result = await axios.post("http://192.168.2.224:4000/api/add-blog", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -82,9 +85,11 @@ const AddBlog: React.FC = () => {
             console.error("Failed to create blog", error);
             // setOpenModal(false);
         }
+        setLoading(false);
     }
     return (
         <div className="add-blog">
+            <LoadingSpin spinning={loading}>
             <h3>Add Blog</h3>
             <div className="add-blog-content">
                 <div className="blog-title">
@@ -100,7 +105,7 @@ const AddBlog: React.FC = () => {
                 <div className="blog-header">
                     <p>Header</p>
                     <TextArea
-                        rows={1}
+                        rows={2}
                         name="header"
                         value={blog.header}
                         onChange={handleInputChange}
@@ -175,6 +180,7 @@ const AddBlog: React.FC = () => {
                     </Button>
                 </div>
             </div>
+            </LoadingSpin>
         </div>
     );
 }

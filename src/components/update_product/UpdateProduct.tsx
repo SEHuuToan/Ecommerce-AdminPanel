@@ -153,7 +153,6 @@ const UpdateProduct: React.FC = () => {
     handleGetDataProduct();
   }, [id]);
   return (
-
     <div className="add-product">
       <LoadingSpin spinning={loading}>
         <div className="addproduct-itemfield">
