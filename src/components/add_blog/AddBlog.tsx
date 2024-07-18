@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import React, { useState, useEffect  } from "react"
 import './AddBlog.css'
 import { Input, Upload, Image, Button, message } from 'antd';
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import LoadingSpin from '../spin/LoadingSpin';
 import { PlusOutlined } from '@ant-design/icons';
-// import useBlogStore from '../../stores/blogStore';
+import useBlogStore from '../../stores/blogStore';
 import axios from "axios";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -15,37 +15,25 @@ const getBase64 = (file: FileType): Promise<string> =>
         reader.onerror = (error) => reject(error);
     });
 const { TextArea } = Input;
-interface Blog {
-    title: string;
-    header: string;
-    body1: string;
-    body2: string;
-    body3: string;
-    footer: string;
-    image: [];
-    status: boolean;
+interface AddBlogProps {
+    onModalClose: () => void;
 }
-const AddBlog: React.FC = () => {
+const AddBlog: React.FC<AddBlogProps> = ({onModalClose}) => {
     const [loading, setLoading] = useState(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [blog, setBlog] = useState<Blog>({
-        title: "",
-        header: "",
-        body1: "",
-        body2: "",
-        body3: "",
-        footer: "",
-        image: [],
-        status: true,
-    });
+    const {setOpenAddModal, blogData, resetInputField} = useBlogStore();
+    const [blog, setBlog] = useState(blogData);
     const uploadButton = (
         <div>
             <PlusOutlined />
             <div style={{ marginTop: 8 }}>Tải lên</div>
         </div>
     );
+    useEffect(() => {
+        setBlog(blogData);
+      }, [blogData]);
     const handlePreview = async (file: UploadFile) => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj as FileType);
@@ -70,7 +58,7 @@ const AddBlog: React.FC = () => {
         });
         formData.append("blog", JSON.stringify(blog))
         try {
-            const result = await axios.post("http://192.168.2.224:4000/api/add-blog", formData, {
+            const result = await axios.post("http://192.168.1.7:4000/api/add-blog", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -85,8 +73,16 @@ const AddBlog: React.FC = () => {
             console.error("Failed to create blog", error);
             // setOpenModal(false);
         }
+        setOpenAddModal(false);
+        resetInputField();
         setLoading(false);
+        onModalClose();
     }
+    const handleCloseAddModal = () => {
+        setOpenAddModal(false);
+        resetInputField();
+        onModalClose();
+      };
     return (
         <div className="add-blog">
             <LoadingSpin spinning={loading}>
@@ -174,7 +170,7 @@ const AddBlog: React.FC = () => {
                     )}
                 </div>
                 <div className="action-button">
-                    <Button>Cancel</Button>
+                    <Button onClick={handleCloseAddModal}>Cancel</Button>
                     <Button type="primary" onClick={createBlog}>
                         Save
                     </Button>

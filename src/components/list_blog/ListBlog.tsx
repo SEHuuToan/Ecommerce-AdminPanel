@@ -4,6 +4,7 @@ import { Button, Modal, message } from "antd";
 import TableData from "./tableData";
 import { axiosGetBlog, axiosDeleteBlog } from "../../utils/axiosUtils";
 import AddBlog from "../add_blog/AddBlog";
+import UpdateBlog from "../update_blog/UpdateBlog";
 import LoadingSpin from "../spin/LoadingSpin";
 import useBlogStore from "../../stores/blogStore";
 // import axios from "axios";
@@ -21,15 +22,8 @@ interface Blog {
 const ListBlog: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [allblogs, setAllBlogs] = useState<Blog[]>([]);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const { closeModal, setCloseModal } = useBlogStore();
-  const handOpenModal = () => {
-    setOpenModal(true);
-  };
-  const handCloseModal = () => {
-    setOpenModal(false);
-  };
-
+  const { openAddModal, openUpdateModal, setOpenAddModal, setOpenUpdateModal, resetInputField } = useBlogStore();
+  const [selectedBlogId, setSelectedBlogId] = useState<string | null>(null);
   const getAllBlog = async () => {
     try {
       const res = await axiosGetBlog("all-blog");
@@ -39,8 +33,13 @@ const ListBlog: React.FC = () => {
       console.error("Failed to get product", error);
     }
   };
-  const handSubmitModal = async () => {
-    setCloseModal(false);
+  const handleOpenAddModal = () => {
+    resetInputField();
+    setOpenAddModal(true);
+  }
+  const handleOpenUpdateModal = (id: string) => {
+    setSelectedBlogId(id);
+    setOpenUpdateModal(true); // Mở modal cập nhật
   };
   useEffect(() => {
     getAllBlog();
@@ -62,14 +61,10 @@ const ListBlog: React.FC = () => {
       message.error("Failed to delete blog");
     }
     setLoading(false)
-
+    getAllBlog();
   };
-  const updateBlog = async () => {
-    try {
-      console.log("update blog");
-    } catch (error) {
-      console.error("Delete Fail", error);
-    }
+  const handleModalClose = () => {
+    getAllBlog();
   };
   return (
     <>
@@ -78,7 +73,7 @@ const ListBlog: React.FC = () => {
           <div className="blog-content">
             <h3>List of Blog</h3>
             <div>
-              <Button type="primary" onClick={handOpenModal}>
+              <Button type="primary" onClick={handleOpenAddModal}>
                 Create Blog
               </Button>
             </div>
@@ -86,7 +81,7 @@ const ListBlog: React.FC = () => {
               <TableData
                 data={allblogs}
                 handleDelete={deleteBlog}
-                handleUpdate={updateBlog}
+                handleUpdate={handleOpenUpdateModal}
               />
             </div>
           </div>
@@ -94,14 +89,26 @@ const ListBlog: React.FC = () => {
       </div>
       <div className="component-add-blog">
         <Modal
-          open={openModal}
-          onOk={handSubmitModal}
-          onCancel={handCloseModal}
+          open={openAddModal}
           maskClosable={false}
+          closable={false}
+          onCancel={handleModalClose}
           footer={null}
-          width={"50%"}
+          width={"60%"}
+          style={{top:20, bottom: 20}}
         >
-          <AddBlog />
+          <AddBlog onModalClose={handleModalClose}/>
+        </Modal>
+        <Modal
+          open={openUpdateModal}
+          maskClosable={false}
+          closable={false}
+          onCancel={handleModalClose}
+          footer={null}
+          width={"60%"}
+          style={{top:20, bottom: 20}}
+        >
+          <UpdateBlog id={selectedBlogId} onModalClose={handleModalClose}/>
         </Modal>
       </div>
     </>

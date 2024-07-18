@@ -3,10 +3,9 @@ import "./UpdateBlog.css";
 import { Input, Upload, Image, message, Button } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useParams } from "react-router-dom";
 import { axiosGetBlog } from "../../utils/axiosUtils";
 import LoadingSpin from "../spin/LoadingSpin";
-// import useBlogStore from "../../stores/blogStore";
+import useBlogStore from "../../stores/blogStore";
 import axios from "axios";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -28,12 +27,17 @@ interface Blog {
   image: string[];
   status: boolean;
 }
-const AddBlog: React.FC = () => {
+interface UpdateModalProps{
+  id: string | null;
+  onModalClose: () => void;
+}
+const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
-  const { id } = useParams<{ id: string }>();
   const [previewImage, setPreviewImage] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const {setOpenUpdateModal} = useBlogStore();
+  // const [blog, setBlog] = useState(blogData);
   const [blog, setBlog] = useState<Blog>({
     _id: "",
     title: "",
@@ -73,7 +77,7 @@ const AddBlog: React.FC = () => {
       try {
         const filename = file.url.split("/").pop();
         const res = await axios.delete(
-          `http://192.168.2.224:4000/api/products/images/${id}/${filename}`
+          `http://192.168.1.7:4000/api/blog/${id}/${filename}`
         );
         if (res.data.success) {
           setFileList((prevFileList) =>
@@ -96,8 +100,9 @@ const AddBlog: React.FC = () => {
   };
   const handleGetDataBlog = async () => {
     try {
-      const res = await axiosGetBlog(`${id}`);
+      const res = await axiosGetBlog(`blog/${id}`);
       const { image } = res.data;
+      console.log("alo",res.data)
       setBlog(res.data);
       setFileList(
         image.map((img: { url: string; public_id: string }, index: number) => ({
@@ -108,7 +113,7 @@ const AddBlog: React.FC = () => {
         }))
       );
     } catch (error) {
-      message.error("Can't found this product");
+      message.error("Can't found this blog");
     }
   };
   const saveBlog = async () => {
@@ -119,10 +124,10 @@ const AddBlog: React.FC = () => {
     newFiles.forEach((file) => {
       formData.append("images", file.originFileObj as File);
     });
-    formData.append("product", JSON.stringify(blog));
+    formData.append("blog", JSON.stringify(blog));
     try {
       const updateProduct = await axios.put(
-        `http://192.168.2.224:4000/api/update-blog/${id}`,
+        `http://192.168.1.7:4000/api/update-blog/${id}`,
         formData,
         {
           headers: {
@@ -141,14 +146,20 @@ const AddBlog: React.FC = () => {
       message.warning("Bạn không thay đổi bất kì giá trị nào!");
     }
     setLoading(false);
+    setOpenUpdateModal(false)
+    onModalClose();
   };
   useEffect(() => {
     handleGetDataBlog();
   }, [id]);
+  const handleCloseUpdateModal = () => {
+    setOpenUpdateModal(false);
+    onModalClose();
+  }
   return (
     <div className="add-blog">
       <LoadingSpin spinning={loading}>
-        <h3>Add Blog</h3>
+        <h3>Update Blog</h3>
         <div className="add-blog-content">
           <div className="blog-title">
             <p>Title</p>
@@ -232,7 +243,7 @@ const AddBlog: React.FC = () => {
             )}
           </div>
           <div className="action-button">
-            <Button>Cancel</Button>
+            <Button onClick={handleCloseUpdateModal}>Cancel</Button>
             <Button type="primary" onClick={saveBlog}>
               Save
             </Button>
@@ -242,4 +253,4 @@ const AddBlog: React.FC = () => {
     </div>
   );
 };
-export default AddBlog;
+export default UpdateBlog;

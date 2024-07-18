@@ -1,6 +1,5 @@
 import type { TableProps } from "antd";
 import { Button, Popconfirm, Table } from "antd";
-import { Link } from 'react-router-dom';
 
 export interface blogType {
     _id: string,
@@ -20,6 +19,7 @@ interface ColumnProps {
 
 export const productColumns = ({
     handleDelete,
+    handleUpdate,
 }: ColumnProps): TableProps<blogType>["columns"] => [
         {
             title: "Image",
@@ -52,11 +52,9 @@ export const productColumns = ({
             render: (_, row: blogType) => (
                 <>
                     <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-                        <Link to={`/update-blog/${row._id}`}>
-                            <Button>
-                                Update
-                            </Button>
-                        </Link>
+                        <Button onClick={() => handleUpdate(row._id)}>
+                            Update
+                        </Button>
                         <Popconfirm
                             title="Sure to delete?"
                             onConfirm={() => {
@@ -82,7 +80,6 @@ const TableData: React.FC<ProductTableProps> = ({
     handleUpdate,
 }) => {
     const columns = productColumns({ handleDelete, handleUpdate });
-
     return (
         <Table<blogType> columns={columns} dataSource={data} rowKey="_id" />
     );
