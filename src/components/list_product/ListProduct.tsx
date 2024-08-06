@@ -3,10 +3,10 @@ import "./ListProduct.css";
 import { Select, message } from "antd";
 import { axiosGet, axiosDelete } from "../../utils/axiosUtils";
 import TableData from "./tableData";
-import LoadingSpin from '../spin/LoadingSpin';
+import LoadingSpin from "../spin/LoadingSpin";
 
 interface Product {
-  _id: string,
+  _id: string;
   name: string;
   odo: string;
   color: string;
@@ -23,7 +23,7 @@ interface Product {
 const ListProduct: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [allproducts, setAllProducts] = useState<Product[]>([]);
-  const [selectFilter, setSelectFilter] = useState('all-product');
+  const [selectFilter, setSelectFilter] = useState("all-product");
 
   const getAllProduct = async () => {
     try {
@@ -35,11 +35,13 @@ const ListProduct: React.FC = () => {
     }
   };
   const deleteProduct = async (id: string) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await axiosDelete(`${id}`)
+      const res = await axiosDelete(`${id}`);
       if (res.data.success) {
-        setAllProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
+        setAllProducts((prevProducts) =>
+          prevProducts.filter((product) => product._id !== id)
+        );
         message.success("Xóa sản phẩm thành công!");
       } else {
         message.error("Failed to delete product");
@@ -51,11 +53,11 @@ const ListProduct: React.FC = () => {
   };
   const updateProduct = async () => {
     try {
-      console.log('update product');
+      console.log("update product");
     } catch (error) {
       console.error("Delete Fail", error);
     }
-  }
+  };
 
   const handleChangeCategory = (value: string) => {
     setSelectFilter(value);
@@ -87,7 +89,11 @@ const ListProduct: React.FC = () => {
         </div>
         <div className="loading-spin">
           <LoadingSpin spinning={loading}>
-            <TableData data={allproducts} handleDelete={deleteProduct} handleUpdate={updateProduct} />
+            <TableData
+              data={allproducts}
+              handleDelete={deleteProduct}
+              handleUpdate={updateProduct}
+            />
           </LoadingSpin>
         </div>
       </div>

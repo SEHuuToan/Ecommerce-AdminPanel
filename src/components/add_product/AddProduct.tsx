@@ -3,8 +3,8 @@ import "./AddProduct.css";
 import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
-import axios from "axios";
 import LoadingSpin from '../spin/LoadingSpin';
+import {axiosPostProduct} from '../../utils/axiosUtils';
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
@@ -76,9 +76,7 @@ const AddProduct: React.FC = () => {
     // Append product data
     formData.append("product", JSON.stringify(product));
     try {
-      const createProduct = await axios.post("http://192.168.1.7:4000/api/products/create-product", formData,{headers: {
-        'Content-Type': 'multipart/form-data'
-      }});
+      const createProduct = await axiosPostProduct('create-product', formData);
       if (createProduct.data.success) {
         message.success("Tạo sản phẩm thành công!");
       } else {

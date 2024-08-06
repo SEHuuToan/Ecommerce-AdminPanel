@@ -80,6 +80,10 @@ const TableData: React.FC<ProductTableProps> = ({
     handleUpdate,
 }) => {
     const columns = productColumns({ handleDelete, handleUpdate });
+    if (!Array.isArray(data)) {
+        console.error('Data is not an array:', data);
+        return null;
+      }
     return (
         <Table<blogType> columns={columns} dataSource={data} rowKey="_id" />
     );

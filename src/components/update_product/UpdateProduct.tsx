@@ -3,10 +3,13 @@ import "./UpdateProduct.css";
 import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
-import axios from "axios";
-import { axiosGet } from "../../utils/axiosUtils";
-import { useParams } from "react-router-dom";
-import LoadingSpin from '../spin/LoadingSpin';
+import {
+  axiosGet,
+  axiosUpdateProduct,
+  axiosDelete,
+} from "../../utils/axiosUtils";
+import { useNavigate, useParams } from "react-router-dom";
+import LoadingSpin from "../spin/LoadingSpin";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -30,6 +33,7 @@ interface Product {
   price: number;
 }
 const UpdateProduct: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { id } = useParams<{ id: string }>();
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -76,9 +80,7 @@ const UpdateProduct: React.FC = () => {
     if (file.url) {
       try {
         const filename = file.url.split("/").pop();
-        const res = await axios.delete(
-          `http://192.168.1.7:4000/api/products/images/${id}/${filename}`
-        );
+        const res = await axiosDelete(`images/${id}/${filename}`);
         if (res.data.success) {
           setFileList((prevFileList) =>
             prevFileList.filter((item) => item.uid !== file.uid)
@@ -104,11 +106,11 @@ const UpdateProduct: React.FC = () => {
       const { image } = res.data;
       setProduct(res.data);
       setFileList(
-        image.map((img: { url: string, public_id: string }, index: number) => ({
+        image.map((img: { url: string; public_id: string }, index: number) => ({
           uid: index,
           url: img.url, // Sử dụng img.url làm URL hình ảnh
           status: "done",
-          public_id: img.public_id // Thêm public_id vào danh sách file
+          public_id: img.public_id, // Thêm public_id vào danh sách file
         }))
       );
     } catch (error) {
@@ -116,7 +118,7 @@ const UpdateProduct: React.FC = () => {
     }
   };
   const saveProduct = async () => {
-    setLoading(true)
+    setLoading(true);
     const formData = new FormData();
     const newFiles = fileList.filter((file) => !file.url);
     // Thêm các file mới vào formData
@@ -125,11 +127,10 @@ const UpdateProduct: React.FC = () => {
     });
     formData.append("product", JSON.stringify(product));
     try {
-      const updateProduct = await axios.put(`http://192.168.1.7:4000/api/products/update-product/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+      const updateProduct = await axiosUpdateProduct(
+        `update-product/${id}`,
+        formData
+      );
       if (updateProduct.data.success) {
         handleGetDataProduct();
         message.success("Cập nhật sản phẩm thành công!");
@@ -141,6 +142,9 @@ const UpdateProduct: React.FC = () => {
       message.warning("Bạn không thay đổi bất kì giá trị nào!");
     }
     setLoading(false);
+  };
+  const cancelUpdate = () => {
+    navigate("/list-product"); // Điều hướng trở lại trang danh sách sản phẩm
   };
   //reload after click save change
   const uploadButton = (
@@ -287,7 +291,7 @@ const UpdateProduct: React.FC = () => {
           )}
         </div>
         <div className="action-button">
-          <Button onClick={handleGetDataProduct}>Cancel</Button>
+          <Button onClick={cancelUpdate}>Cancel</Button>
           <Button type="primary" onClick={saveProduct}>
             Save
           </Button>

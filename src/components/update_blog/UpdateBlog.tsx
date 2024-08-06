@@ -3,10 +3,10 @@ import "./UpdateBlog.css";
 import { Input, Upload, Image, message, Button } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { axiosGetBlog } from "../../utils/axiosUtils";
+import { axiosGetBlog, axiosUpdateBlog, axiosDeleteImageBlog } from "../../utils/axiosUtils";
 import LoadingSpin from "../spin/LoadingSpin";
 import useBlogStore from "../../stores/blogStore";
-import axios from "axios";
+// import axios from "axios";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -76,9 +76,10 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
     if (file.url) {
       try {
         const filename = file.url.split("/").pop();
-        const res = await axios.delete(
-          `http://192.168.1.7:4000/api/blog/${id}/${filename}`
-        );
+        // const res = await axios.delete(
+        //   `http://192.168.1.8:4000/api/blog/${id}/${filename}`
+        // );
+        const res = await axiosDeleteImageBlog(`images/${id}/${filename}`);
         if (res.data.success) {
           setFileList((prevFileList) =>
             prevFileList.filter((item) => item.uid !== file.uid)
@@ -102,7 +103,6 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
     try {
       const res = await axiosGetBlog(`blog/${id}`);
       const { image } = res.data;
-      console.log("alo",res.data)
       setBlog(res.data);
       setFileList(
         image.map((img: { url: string; public_id: string }, index: number) => ({
@@ -126,15 +126,7 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
     });
     formData.append("blog", JSON.stringify(blog));
     try {
-      const updateProduct = await axios.put(
-        `http://192.168.1.7:4000/api/update-blog/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const updateProduct = await axiosUpdateBlog (`update-blog/${id}`, formData);
       if (updateProduct.data.success) {
         handleGetDataBlog();
         message.success("Cập nhật blog thành công!");

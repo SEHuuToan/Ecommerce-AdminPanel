@@ -3,8 +3,8 @@ import { Button } from "antd";
 import { message } from "antd";
 import "./css/Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import useAuthStore from "../stores/userInformationStore";
+import { axiosPost } from "../utils/axiosUtils";
 interface User {
   username: string;
   password: string;
@@ -25,17 +25,11 @@ const Login: React.FC = () => {
   };
   const handleSubmitLogin = async () => {
     try {
-      const resultLogin = await axios.post(
-        "http://192.168.1.7:4000/login", user, {
-            headers:{
-                "Content-Type": "application/json"
-            }
-        }
-      );
-      const {username, token} = resultLogin.data //lay token duoc truyen tu BE len FE
-      if (token) {
-        login(username, token); //truyen token vao store
-        localStorage.setItem("token", token);
+      const resultLogin = await axiosPost('auth/login', user);
+      const { accessToken } = resultLogin.data; //lay token duoc truyen tu BE len FE
+      if (accessToken) {
+        login(user.username, accessToken); //truyen token vao store
+        localStorage.setItem("token", accessToken);
         navigate("/");
         message.success("Dang nhap thành công!");
 
@@ -44,6 +38,11 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       message.error("Đã xảy ra lỗi. Vui lòng Thu dang nhap lai");
+    }
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSubmitLogin();
     }
   };
   return (
@@ -58,6 +57,7 @@ const Login: React.FC = () => {
               placeholder="Email Address"
               value={user.username}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
 
             <input
@@ -66,6 +66,8 @@ const Login: React.FC = () => {
               placeholder="Password"
               value={user.password}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+
             />
           </div>
           <Button type="primary" onClick={handleSubmitLogin}>

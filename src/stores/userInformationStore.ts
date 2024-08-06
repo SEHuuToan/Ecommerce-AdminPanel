@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {axiosLogout} from '../utils/axiosUtils';
 
 interface AuthState {
     isAuthenticated: boolean;
@@ -10,26 +11,58 @@ interface AuthState {
     logout: () => void;
 }
 
+// const useAuthStore = create<AuthState>((set) => ({
+//     isAuthenticated: false,
+//     user: null,
+//     token: localStorage.getItem("token"),
+//     login: (username: string, token: string) => {
+//         localStorage.setItem("token", token); // Lưu token vào localStorage
+//         set({
+//           isAuthenticated: true,
+//           user: { username },
+//           token: token,
+//         });
+//       },
+//     logout: async () => {
+//         try {
+//             await axiosLogout('logout');
+//             localStorage.removeItem('token');
+//             set({
+//                 isAuthenticated: false,
+//                 user: null,
+//                 token: null,
+//             });
+//         } catch (error) {
+//             console.error('Logout error:', error);
+//         }
+//     }
+// }));
 const useAuthStore = create<AuthState>((set) => ({
-    isAuthenticated: false,
+    isAuthenticated: !!localStorage.getItem('accessToken'),
     user: null,
-    token: localStorage.getItem("token"),
+    token: localStorage.getItem('accessToken'),
     login: (username: string, token: string) => {
-        localStorage.setItem("token", token); // Lưu token vào localStorage
+        localStorage.setItem('accessToken', token);
         set({
           isAuthenticated: true,
           user: { username },
           token: token,
         });
-      },
-    logout: () => {
-        localStorage.removeItem("token");
-        set({
-            isAuthenticated: false,
-            user: null,
-            token: null
-        });
+    },
+    logout: async () => {
+        try {
+            await axiosLogout('logout');
+            localStorage.removeItem('accessToken');
+            set({
+                isAuthenticated: false,
+                user: null,
+                token: null,
+            });
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     }
 }));
+
 
 export default useAuthStore;

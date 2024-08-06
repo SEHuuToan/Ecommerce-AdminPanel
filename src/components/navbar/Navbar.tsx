@@ -33,8 +33,8 @@ const Navbar: React.FC = () => {
             ),
         }
     ]
-    const Logout = () => {
-        logout();
+    const Logout = async () => {
+        await logout();
         navigate("/login");
     }
     const handleOpenProfile = () => {
