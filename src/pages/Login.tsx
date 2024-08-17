@@ -29,7 +29,7 @@ const Login: React.FC = () => {
       const { accessToken } = resultLogin.data; //lay token duoc truyen tu BE len FE
       if (accessToken) {
         login(user.username, accessToken); //truyen token vao store
-        localStorage.setItem("token", accessToken);
+        localStorage.setItem("accessToken", accessToken);
         navigate("/");
         message.success("Dang nhap thành công!");
 

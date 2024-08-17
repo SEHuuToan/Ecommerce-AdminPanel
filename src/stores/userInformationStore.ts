@@ -51,7 +51,7 @@ const useAuthStore = create<AuthState>((set) => ({
     },
     logout: async () => {
         try {
-            await axiosLogout('logout');
+            await axiosLogout();
             localStorage.removeItem('accessToken');
             set({
                 isAuthenticated: false,

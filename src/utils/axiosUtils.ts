@@ -5,7 +5,7 @@ axios.defaults.withCredentials = true
 // const HOST = 'http://localhost:4000/api/products/'
 const HOST = import.meta.env.VITE_BASE_URL_LOCAL;
 const getAxiosConfig = () => {
-    const accessToken = localStorage.getItem('token');
+    const accessToken = localStorage.getItem('accessToken');
     const axiosConfig = {
         headers: {
             Authorization: accessToken || '',
@@ -81,8 +81,8 @@ const axiosPost = async (url: string, data: object) => {
     });
     return res;
 }
-const axiosLogout = async (url: string) => {
-    const res = await axios.post(HOST + 'auth/' + url);
+const axiosLogout = async () => {
+    const res = await axios.post(HOST + 'auth/logout');
     return res;
 }
 const axiosDelete = async (url: string) => {

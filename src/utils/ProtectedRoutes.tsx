@@ -4,7 +4,7 @@ import useAuthStore from "../stores/userInformationStore";
 
 const ProtectedRoutes: React.FC = () => {
     const { isAuthenticated, login } = useAuthStore();
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const handleDecodeToken = () => {
         if (token) {
             try {
