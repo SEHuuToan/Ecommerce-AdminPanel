@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./AddProduct.css";
-import { Select, Input, Col, Row, Image, Upload, Button, message } from "antd";
+import { Select, Input, Col, Row, Image, Upload, Button, message, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
-import LoadingSpin from '../spin/LoadingSpin';
-import {axiosPostProduct} from '../../utils/axiosUtils';
-
+import LoadingSpin from "../spin/LoadingSpin";
+import { axiosPostProduct } from "../../utils/axiosUtils";
+import { z } from "zod";
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+
 const getBase64 = (file: FileType): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -15,18 +16,50 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 const { TextArea } = Input;
-interface Product {
-  name: string;
-  odo: string;
-  color: string;
-  model: string;
-  brand: string;
-  option: string;
-  description: string;
-  category: string;
-  image: [];
-  price: number;
-}
+// interface Product {
+//   name: string;
+//   odo: string;
+//   color: string;
+//   model: string;
+//   brand: string;
+//   option: string;
+//   description: string;
+//   category: string;
+//   image: [];
+//   price: number;
+// }
+
+const categories = [
+  "sport-bike",
+  "naked-bike",
+  "adventure",
+  "classic",
+] as const;
+
+const FormSchema = z.object({
+  name: z.string({
+    required_error: "Name can not be blank",
+  }),
+  odo: z.coerce.number().min(1, "Odo ko am, thang ngu"),
+  color: z.string({
+    required_error: "Color can not be blank",
+  }),
+  model: z.coerce
+    .number()
+    .min(1900, "model ko am, thang ngu")
+    .max(new Date().getFullYear(), "Can not sell a future bike."),
+  brand: z.string({
+    required_error: "Brand can not be blank",
+  }),
+  option: z.string().optional(),
+  description: z.string().optional(),
+  price: z.coerce.number().min(1, "Gia ban khong duoc am"),
+  category: z.enum(categories).default("sport-bike"),
+  image: z.array(z.string().base64()),
+});
+
+type Product = z.infer<typeof FormSchema>;
+
 const AddProduct: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -34,9 +67,9 @@ const AddProduct: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [product, setProduct] = useState<Product>({
     name: "",
-    odo: "",
+    odo: 1,
     color: "",
-    model: "",
+    model: 1900,
     brand: "",
     option: "",
     description: "",
@@ -44,6 +77,23 @@ const AddProduct: React.FC = () => {
     image: [],
     price: 0,
   });
+
+  const [fieldErrors, setErrors] = useState<{
+    [key: string]: string[] | undefined;
+  }>({});
+
+  const validateFormData = (formData: Product) => {
+    const { success, error, data } = FormSchema.safeParse(formData);
+
+    if (success) {
+      setErrors({});
+    }
+
+    // Check error
+    if (error) {
+      setErrors({ ...error.formErrors.fieldErrors });
+    }
+  };
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -58,13 +108,15 @@ const AddProduct: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
+    console.log({ ...product, [name]: value });
+    validateFormData({ ...product, [name]: value });
   };
-  const handleCategoryChange = (value: string) => {
+  const handleCategoryChange = (value: Product["category"]) => {
     setProduct((prevProduct) => ({ ...prevProduct, category: value }));
   };
+
   const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
     setFileList(newFileList);
-
 
   //Logic create product
   const createProduct = async () => {
@@ -76,7 +128,7 @@ const AddProduct: React.FC = () => {
     // Append product data
     formData.append("product", JSON.stringify(product));
     try {
-      const createProduct = await axiosPostProduct('create-product', formData);
+      const createProduct = await axiosPostProduct("create-product", formData);
       if (createProduct.data.success) {
         message.success("Tạo sản phẩm thành công!");
       } else {
@@ -98,146 +150,172 @@ const AddProduct: React.FC = () => {
       <div style={{ marginTop: 8 }}>Tải lên</div>
     </div>
   );
-
+// 
   return (
     <div className="add-product">
       <LoadingSpin spinning={loading}>
-      <div className="addproduct-itemfield">
-        <p>Name</p>
-        <input
-          type="text"
-          name="name"
-          value={product.name}
-          onChange={handleInputChange}
-        />
-      </div>
-      <Row className="row-setup">
-        <Col span={7}>
-          <div className="addproduct-itemfield">
-            <p>Odo</p>
-            <input
+        <div className="addproduct-itemfield">
+          <Form.Item
+            validateStatus={fieldErrors.name ? "error" : "success"}
+              hasFeedback
+              help={fieldErrors.name}
+            >
+            <p>Name</p>
+            <Input
               type="text"
-              name="odo"
-              value={product.odo}
+              name="name"
+              value={product.name}
               onChange={handleInputChange}
             />
-          </div>
-        </Col>
-        <Col span={7}>
-          <div className="addproduct-itemfield">
-            <p>Model</p>
-            <input
-              type="text"
-              name="model"
-              value={product.model}
-              onChange={handleInputChange}
-            />
-          </div>
-        </Col>
-        <Col span={7}>
-          <div className="addproduct-itemfield">
-            <p>Brand</p>
-            <input
-              type="text"
-              name="brand"
-              value={product.brand}
-              onChange={handleInputChange}
-            />
-          </div>
-        </Col>
-      </Row>
-      <div className="addproduct-itemfield">
-        <p>Color</p>
-        <input
-          type="text"
-          name="color"
-          value={product.color}
-          onChange={handleInputChange}
-        />
-      </div>
-
-      <div className="addproduct-itemfield">
-        <p>Option</p>
-        <TextArea
-          rows={2}
-          name="option"
-          value={product.option}
-          onChange={handleInputChange}
-        />
-      </div>
-      <div className="addproduct-itemfield">
-        <p>Description</p>
-        <TextArea
-          rows={2}
-          name="description"
-          value={product.description}
-          onChange={handleInputChange}
-        />
-      </div>
-      <Row>
-        <Col span={12}>
-          <div className="addproduct-itemfield">
-            <p>Category</p>
-            <Select
-              className="add-product-selector"
-              defaultValue="sport-bike"
-              style={{ width: "100%" }}
-              value={product.category}
-              onChange={handleCategoryChange}
-              options={[
-                { value: "sport-bike", label: "Sport Bike" },
-                { value: "naked-bike", label: "Naked Bike" },
-                { value: "adventure", label: "Adventure" },
-                { value: "classic", label: "Classic / Cafe Racer" },
-              ]}
-            />
-          </div>
-        </Col>
-        <Col span={12}>
-          <div className="addproduct-itemfield">
-            <p>Price</p>
-            <input
-              type="text"
-              name="price"
-              value={product.price}
-              onChange={handleInputChange}
-            />
-          </div>
-        </Col>
-      </Row>
-      {/* Logic upload image o day */}
-      <div className="addproduct-itemfield">
-        <p>Image</p>
-        <Upload
-          multiple
-          maxCount={12}
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={handlePreview}
-          onChange={handleChange}
-          accept=".png,.jpg,.jpeg"
-          beforeUpload={() => false} // ngăn không tự động tải lên
-        >
-          {fileList.length >= 12 ? null : uploadButton}
-        </Upload>
-        {previewImage && (
-          <Image
-            wrapperStyle={{ display: "none" }}
-            preview={{
-              visible: previewOpen,
-              onVisibleChange: (visible) => setPreviewOpen(visible),
-              afterOpenChange: (visible) => !visible && setPreviewImage(""),
-            }}
-            src={previewImage}
+          </Form.Item>
+        </div>
+        <Row className="row-setup">
+          <Col span={7}>
+            <div className="addproduct-itemfield">
+            <Form.Item
+              validateStatus={fieldErrors.odo ? "error" : ""}
+              hasFeedback
+              help={fieldErrors.odo}
+              >
+                <p>Odo</p>
+                <Input
+                  type="number"
+                  name="odo"
+                  value={product.odo}
+                  onChange={handleInputChange}
+                />
+            </Form.Item>
+            </div>
+          </Col>
+          <Col span={7}>
+            <div>
+            <Form.Item
+              className="addproduct-itemfield"
+              validateStatus={fieldErrors.model ? "error" : ""}
+              hasFeedback
+              help={fieldErrors.model}
+              >
+              <p>Model</p>
+              <Input
+                status={fieldErrors.model ? "error" : ""}
+                type="number"
+                name="model"
+                value={product.model}
+                onChange={handleInputChange}
+              />
+             </Form.Item>
+            </div>
+          </Col>
+          <Col span={7}>
+            <div className="addproduct-itemfield">
+              <p>Brand</p>
+              <Input
+                status={fieldErrors.brand ? "error" : ""}
+                type="text"
+                name="brand"
+                value={product.brand}
+                onChange={handleInputChange}
+              />
+              <p style={{ color: "red" }}>{fieldErrors.brand}</p>
+            </div>
+          </Col>
+        </Row>
+        <div className="addproduct-itemfield">
+          <p>Color</p>
+          <Input
+            status={fieldErrors.model ? "error" : ""}
+            type="text"
+            name="color"
+            value={product.color}
+            onChange={handleInputChange}
           />
-        )}
-      </div>
-      <div className="action-button">
-        <Button onClick={reload}>Cancel</Button>
-        <Button type="primary" onClick={createProduct}>
-          Save
-        </Button>
-      </div>
+          <p style={{ color: "red" }}>{fieldErrors.color}</p>
+        </div>
+
+        <div className="addproduct-itemfield">
+          <p>Option</p>
+          <TextArea
+            rows={2}
+            name="option"
+            value={product.option}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="addproduct-itemfield">
+          <p>Description</p>
+          <TextArea
+            rows={2}
+            name="description"
+            value={product.description}
+            onChange={handleInputChange}
+          />
+        </div>
+        <Row>
+          <Col span={12}>
+            <div className="addproduct-itemfield">
+              <p>Category</p>
+              <Select
+                className="add-product-selector"
+                defaultValue="sport-bike"
+                style={{ width: "100%" }}
+                value={product.category}
+                onChange={handleCategoryChange}
+                options={[
+                  { value: "sport-bike", label: "Sport Bike" },
+                  { value: "naked-bike", label: "Naked Bike" },
+                  { value: "adventure", label: "Adventure" },
+                  { value: "classic", label: "Classic / Cafe Racer" },
+                ]}
+              />
+            </div>
+          </Col>
+          <Col span={12}>
+            <div className="addproduct-itemfield">
+              <p>Price</p>
+              <Input
+                status={fieldErrors.price ? "error" : ""}
+                type="number"
+                name="price"
+                value={product.price}
+                onChange={handleInputChange}
+              />
+              <p style={{ color: "red" }}>{fieldErrors.price}</p>
+            </div>
+          </Col>
+        </Row>
+        {/* Logic upload image o day */}
+        <div className="addproduct-itemfield">
+          <p>Image</p>
+          <Upload
+            multiple
+            maxCount={12}
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={handlePreview}
+            onChange={handleChange}
+            accept=".png,.jpg,.jpeg"
+            beforeUpload={() => false} // ngăn không tự động tải lên
+          >
+            {fileList.length >= 12 ? null : uploadButton}
+          </Upload>
+          {previewImage && (
+            <Image
+              wrapperStyle={{ display: "none" }}
+              preview={{
+                visible: previewOpen,
+                onVisibleChange: (visible) => setPreviewOpen(visible),
+                afterOpenChange: (visible) => !visible && setPreviewImage(""),
+              }}
+              src={previewImage}
+            />
+          )}
+        </div>
+        <div className="action-button">
+          <Button onClick={reload}>Cancel</Button>
+          <Button type="primary" onClick={createProduct}>
+            Save
+          </Button>
+        </div>
       </LoadingSpin>
     </div>
   );
