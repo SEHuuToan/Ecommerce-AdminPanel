@@ -75,6 +75,7 @@ const axiosUpdateProduct = async (url: string, data: object) => {
 }
 const axiosPost = async (url: string, data: object) => {
     const res = await axios.post(HOST + url, data, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'application/json',
         },
@@ -96,6 +97,7 @@ const axiosGetBlog = async (url: string) => {
 }
 const axiosPostBlog = async (url: string, data: object) => {
     const res = await axios.post(HOST + 'api/' + url, data, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
             ...getAxiosConfig().headers
@@ -105,6 +107,7 @@ const axiosPostBlog = async (url: string, data: object) => {
 }
 const axiosUpdateBlog = async (url: string, data: object) => {
     const res = await axios.put(HOST + 'api/' + url, data, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
             ...getAxiosConfig().headers
