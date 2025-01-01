@@ -74,7 +74,7 @@ const Login: React.FC = () => {
             Continue
           </Button>
           <p className="login-signup">
-            Don`&apos;`t have an account? <Link to="/sign-up">Sign Up Now</Link>
+            Don&apos;t have an account? <Link to="/sign-up">Sign Up Now</Link>
           </p>
         </div>
       </div>
