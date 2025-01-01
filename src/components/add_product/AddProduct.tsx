@@ -83,7 +83,7 @@ const AddProduct: React.FC = () => {
   }>({});
 
   const validateFormData = (formData: Product) => {
-    const { success, error, data } = FormSchema.safeParse(formData);
+    const { success, error } = FormSchema.safeParse(formData);
 
     if (success) {
       setErrors({});

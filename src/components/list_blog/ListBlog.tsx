@@ -57,7 +57,7 @@ const ListBlog: React.FC = () => {
       } else {
         message.error("Failed to delete blog");
       }
-    } catch (error) {
+    } catch {
       message.error("Failed to delete blog");
     }
     setLoading(false)

@@ -46,7 +46,7 @@ const ListProduct: React.FC = () => {
       } else {
         message.error("Failed to delete product");
       }
-    } catch (error) {
+    } catch {
       message.error("Failed to delete product");
     }
     setLoading(false);

@@ -31,7 +31,7 @@ const SignUp: React.FC = () => {
             } else {
                 message.error("Tao moi thất bại!");
             }
-        } catch (error) {
+        } catch {
             message.error("Đã xảy ra lỗi. Vui lòng Thu lai");
         }
     }

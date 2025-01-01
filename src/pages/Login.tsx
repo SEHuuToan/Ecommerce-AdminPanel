@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "antd";
 import { message } from "antd";
 import "./css/Login.css";
@@ -36,7 +36,7 @@ const Login: React.FC = () => {
       } else {
         message.error("Dang nhap thất bại!");
       }
-    } catch (error) {
+    } catch {
       message.error("Đã xảy ra lỗi. Vui lòng Thu dang nhap lai");
     }
   };
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
             Continue
           </Button>
           <p className="login-signup">
-            Don't have an account? <Link to="/sign-up">Sign Up Now</Link>
+            Don`&apos;`t have an account? <Link to="/sign-up">Sign Up Now</Link>
           </p>
         </div>
       </div>

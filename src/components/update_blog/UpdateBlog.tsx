@@ -112,7 +112,7 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
           public_id: img.public_id, // Thêm public_id vào danh sách file
         }))
       );
-    } catch (error) {
+    } catch {
       message.error("Can't found this blog");
     }
   };

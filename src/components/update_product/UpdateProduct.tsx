@@ -113,7 +113,7 @@ const UpdateProduct: React.FC = () => {
           public_id: img.public_id, // Thêm public_id vào danh sách file
         }))
       );
-    } catch (error) {
+    } catch {
       message.error("Can't found this product");
     }
   };

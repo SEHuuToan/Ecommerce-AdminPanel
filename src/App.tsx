@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
 // import Navbar from "./components/navbar/Navbar";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -22,28 +22,6 @@ const App: React.FC = () => {
     <>
       <div className="admin">
         <BrowserRouter>
-          {/* {<Navbar />}
-          <div className="content-container">
-            {<Sidebar />}
-            <div className="main-content">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/sign-up" element={<SignUp />} />
-                <Route element={<ProtectedRoutes />}>
-                  {<Route path="/" element={<Home />} />}
-                  {<Route path="/add-product" element={<AddProduct />} />}
-                  {
-                    <Route
-                      path="/update-product/:id"
-                      element={<UpdateProduct />}
-                    />
-                  }
-                  {<Route path="/list-product" element={<ListProduct />} />}
-                  {<Route path="/add-blog" element={<AddBlog />} />}
-                </Route>
-              </Routes>
-            </div>
-          </div> */}
           <Routes>
             <Route element={<CommonLayout />}>
               <Route path="/login" element={<Login />} />
@@ -60,9 +38,9 @@ const App: React.FC = () => {
                   />
                 }
                 {<Route path="/list-product" element={<ListProduct />} />}
-                {<Route path="/add-blog" element={<AddBlog />} />}
+                {<Route path="/add-blog" element={<AddBlog onModalClose={() => console.log("Modal closed")}/>} />}
                 {<Route path="/list-blog" element={<ListBlog />} />}
-                {<Route path="/update-blog/:id" element={<UpdateBlog />} />}
+                {<Route path="/update-blog/:id" element={<UpdateBlog  id={useParams<{ id: string }>().id!} onModalClose={() => console.log("Modal closed")} />} />}
 
               </Route>
             </Route>

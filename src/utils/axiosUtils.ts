@@ -1,9 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-// import { useNavigate } from 'react-router-dom';
+
 axios.defaults.withCredentials = true
-// const HOST = 'http://localhost:4000/api/products/'
-const HOST = import.meta.env.VITE_BASE_URL_LOCAL;
+
+const HOST = import.meta.env.VITE_BACK_END_URL_API;
 const getAxiosConfig = () => {
     const accessToken = localStorage.getItem('accessToken');
     const axiosConfig = {
