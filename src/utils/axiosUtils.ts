@@ -78,9 +78,13 @@ const axiosUpdateProduct = async (url: string, data: object) => {
     return res;
 }
 const axiosPost = async (url: string, data: object) => {
+    const token = useAuthStore.getState().token; 
     try {
         const res = await axios.post(HOST + url, data, {
             withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         })
         return res; 
     } catch (error) {
