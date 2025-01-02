@@ -77,13 +77,15 @@ const axiosUpdateProduct = async (url: string, data: object) => {
     return res;
 }
 const axiosPost = async (url: string, data: object) => {
-    const res = await axios.post(HOST + url, data, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-    return res;
+    try {
+        const res = await axios.post(HOST + url, data, {
+            withCredentials: true,
+        })
+        return res; 
+    } catch (error) {
+        console.error("Error in axiosPost: ", error);
+        throw error
+    }
 }
 const axiosLogout = async () => {
     const res = await axios.post(HOST + 'auth/logout');
