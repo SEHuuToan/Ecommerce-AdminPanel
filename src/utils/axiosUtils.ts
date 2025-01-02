@@ -57,6 +57,7 @@ const axiosGet = async (url: string) => {
 }
 const axiosPostProduct = async (url: string, data: object) => {
     const res = await axios.post(HOST + 'api/products/' + url, data, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
             ...getAxiosConfig().headers
@@ -66,6 +67,7 @@ const axiosPostProduct = async (url: string, data: object) => {
 }
 const axiosUpdateProduct = async (url: string, data: object) => {
     const res = await axios.put(HOST + 'api/products/' + url, data, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
             ...getAxiosConfig().headers
