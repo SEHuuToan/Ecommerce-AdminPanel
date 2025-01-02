@@ -63,7 +63,8 @@ const axiosPostProduct = async (url: string, data: object) => {
         withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`
+        
+            ...getAxiosConfig().headers
         }
     },);
     return res;
