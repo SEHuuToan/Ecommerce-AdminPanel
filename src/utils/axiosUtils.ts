@@ -58,6 +58,7 @@ const axiosGet = async (url: string) => {
 }
 const axiosPostProduct = async (url: string, data: object) => {
     const token = useAuthStore.getState().token; 
+    console.log("accessToken from front-end: ", token);
     const res = await axios.post(HOST + 'api/products/' + url, data, {
         withCredentials: true,
         headers: {
