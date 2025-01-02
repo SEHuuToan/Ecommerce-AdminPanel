@@ -38,22 +38,22 @@ const categories = [
 
 const FormSchema = z.object({
   name: z.string({
-    required_error: "Name can not be blank",
+    required_error: "Name do not blank",
   }),
-  odo: z.coerce.number().min(1, "Odo ko am, thang ngu"),
+  odo: z.coerce.number().min(1, "Wrong ODO input"),
   color: z.string({
-    required_error: "Color can not be blank",
+    required_error: "Color do not blank",
   }),
   model: z.coerce
     .number()
-    .min(1900, "model ko am, thang ngu")
-    .max(new Date().getFullYear(), "Can not sell a future bike."),
+    .min(1900, "Oldest Model is 2000")
+    .max(new Date().getFullYear(), "Can not sell a non existed future bike."),
   brand: z.string({
     required_error: "Brand can not be blank",
   }),
   option: z.string().optional(),
   description: z.string().optional(),
-  price: z.coerce.number().min(1, "Gia ban khong duoc am"),
+  price: z.coerce.number().min(1, "Min prices is 1$"),
   category: z.enum(categories).default("sport-bike"),
   image: z.array(z.string().base64()),
 });
@@ -147,7 +147,7 @@ const AddProduct: React.FC = () => {
   const uploadButton = (
     <div>
       <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Tải lên</div>
+      <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
 // 
