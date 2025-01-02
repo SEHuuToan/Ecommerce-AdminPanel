@@ -6,10 +6,10 @@ axios.defaults.withCredentials = true
 
 const HOST = import.meta.env.VITE_BACK_END_URL_API;
 const getAxiosConfig = () => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = Cookies.get('accessToken');
     const axiosConfig = {
         headers: {
-            Authorization: accessToken || '',
+            Authorization: accessToken ? `Bearer ${accessToken}` : '',
         }
     }
     return axiosConfig;
@@ -63,7 +63,6 @@ const axiosPostProduct = async (url: string, data: object) => {
         withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data',
-        
             ...getAxiosConfig().headers
         }
     },);
