@@ -57,7 +57,7 @@ const axiosGet = async (url: string) => {
     return res;
 }
 const axiosPostProduct = async (url: string, data: object) => {
-    const {token} = useAuthStore()
+    const token = useAuthStore.getState().token; 
     const res = await axios.post(HOST + 'api/products/' + url, data, {
         withCredentials: true,
         headers: {
