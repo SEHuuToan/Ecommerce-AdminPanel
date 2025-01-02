@@ -128,7 +128,7 @@ const AddProduct: React.FC = () => {
     // Append product data
     formData.append("product", JSON.stringify(product));
     try {
-      const createProduct = await axiosPostProduct("create-product", formData);
+      const createProduct = await axiosPostProduct('create-product', formData);
       if (createProduct.data.success) {
         message.success("Tạo sản phẩm thành công!");
       } else {
