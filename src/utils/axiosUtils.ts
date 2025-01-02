@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import useAuthStore from '../stores/userInformationStore';
 
 axios.defaults.withCredentials = true
 
@@ -56,11 +57,11 @@ const axiosGet = async (url: string) => {
     return res;
 }
 const axiosPostProduct = async (url: string, data: object) => {
+    const {token} = useAuthStore()
     const res = await axios.post(HOST + 'api/products/' + url, data, {
         withCredentials: true,
         headers: {
-            'Content-Type': 'multipart/form-data',
-            ...getAxiosConfig().headers
+            Authorization: `Bearer ${token}`
         }
     },);
     return res;
