@@ -1,57 +1,41 @@
 {
     "redirects": [
-        {
+      {
         "source": "/login",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/login"
-        }
-    ],
-    "redirects": [
-    {
-      "source": "/sign-up",
-      "destination": "https://ecommerce-admin-panel-nu.vercel.app/sign-up"
-    }
-    ],
-    "redirects": [
-        {
+      },
+      {
+        "source": "/sign-up",
+        "destination": "https://ecommerce-admin-panel-nu.vercel.app/sign-up"
+      },
+      {
         "source": "/",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/add-product",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/add-product"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/update-product",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/update-product"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/list-product",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/list-product"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/add-blog",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/add-blog"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/list-blog",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/list-blog"
-        }
-    ],
-    "redirects": [
-        {
+      },
+      {
         "source": "/update-blog",
         "destination": "https://ecommerce-admin-panel-nu.vercel.app/update-blog"
-        }
+      }
     ]
   }
   
