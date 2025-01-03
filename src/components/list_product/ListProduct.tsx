@@ -31,7 +31,7 @@ const ListProduct: React.FC = () => {
       const data: Product[] = res.data;
       setAllProducts(data);
     } catch (error) {
-      console.error("Failed to get product", error);
+      console.error("Failed to get product!", error);
     }
   };
   const deleteProduct = async (id: string) => {
@@ -42,12 +42,12 @@ const ListProduct: React.FC = () => {
         setAllProducts((prevProducts) =>
           prevProducts.filter((product) => product._id !== id)
         );
-        message.success("Xóa sản phẩm thành công!");
+        message.success("Delete image successful!");
       } else {
-        message.error("Failed to delete product");
+        message.error("Delete image fail!");
       }
     } catch {
-      message.error("Failed to delete product");
+      message.error("Failed to delete product!");
     }
     setLoading(false);
   };

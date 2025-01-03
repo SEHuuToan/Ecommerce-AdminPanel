@@ -89,13 +89,13 @@ const UpdateProduct: React.FC = () => {
             ...prevProduct,
             image: prevProduct.image.filter((img) => img !== file.url),
           }));
-          message.success("Xoa anh thanh cong");
+          message.success("Delete image successful!");
         } else {
-          message.error("Failed to delete image");
+          message.error("Failed to delete image!");
         }
       } catch (error) {
-        console.error("Failed to delete image:", error);
-        message.error("Failed to delete image");
+        console.error("Failed to delete image!", error);
+        message.error("Failed to delete image!");
       }
     }
     setLoading(false);
@@ -133,13 +133,13 @@ const UpdateProduct: React.FC = () => {
       );
       if (updateProduct.data.success) {
         handleGetDataProduct();
-        message.success("Cập nhật sản phẩm thành công!");
+        message.success("Update product successful!");
       } else {
-        message.error("Cập nhật sản phẩm thất bại!");
+        message.error("Update product fail. Please check again!");
       }
     } catch (error) {
-      console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
-      message.warning("Bạn không thay đổi bất kì giá trị nào!");
+      console.error("Something wrong, please try again!", error);
+      message.warning("You don't change any value. Please change any fields to update product!");
     }
     setLoading(false);
   };

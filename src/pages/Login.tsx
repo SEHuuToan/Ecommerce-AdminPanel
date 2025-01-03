@@ -31,13 +31,13 @@ const Login: React.FC = () => {
         login(user.username, accessToken); //truyen token vao store
         localStorage.setItem("accessToken", accessToken);
         navigate("/");
-        message.success("Dang nhap thành công!");
+        message.success("Login Successful!");
 
       } else {
-        message.error("Dang nhap thất bại!");
+        message.error("Login Fail. Please try again!");
       }
     } catch {
-      message.error("Đã xảy ra lỗi. Vui lòng Thu dang nhap lai");
+      message.error("Something wrong with server.");
     }
   };
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

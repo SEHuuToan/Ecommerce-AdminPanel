@@ -20,19 +20,19 @@ const SignUp: React.FC = () => {
     };
     const handleSignUpAccount = async () => {
         try {
-            const resultSignup = await axios.post("http://192.168.1.7:4000/sign-up", user, {
+            const resultSignup = await axios.post("hhttps://ecommerce-backend-utuk.onrender.com/sign-up", user, {
                 headers:{
                     "Content-Type": "application/json"
                 }
             });
             if (resultSignup.data.__v === 0) {
-                message.success("Tao moi thành công!");
+                message.success("Create Successful!");
                 navigate("/login")
             } else {
-                message.error("Tao moi thất bại!");
+                message.error("Create Fail. Please try again!");
             }
         } catch {
-            message.error("Đã xảy ra lỗi. Vui lòng Thu lai");
+            message.error("Something wrong with server.");
         }
     }
     return (

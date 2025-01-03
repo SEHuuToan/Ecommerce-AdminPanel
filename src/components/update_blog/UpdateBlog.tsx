@@ -88,13 +88,13 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
             ...prevBlog,
             image: prevBlog.image.filter((img) => img !== file.url),
           }));
-          message.success("Xoa anh thanh cong");
+          message.success("Delete image successful!");
         } else {
-          message.error("Failed to delete image");
+          message.error("Failed to delete image!");
         }
       } catch (error) {
-        console.error("Failed to delete image:", error);
-        message.error("Failed to delete image");
+        console.error("Failed to delete image!", error);
+        message.error("Failed to delete image!");
       }
     }
     setLoading(false);
@@ -113,7 +113,7 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
         }))
       );
     } catch {
-      message.error("Can't found this blog");
+      message.error("Can't found this blog!");
     }
   };
   const saveBlog = async () => {
@@ -129,13 +129,13 @@ const UpdateBlog: React.FC<UpdateModalProps> = ({id, onModalClose}) => {
       const updateProduct = await axiosUpdateBlog (`update-blog/${id}`, formData);
       if (updateProduct.data.success) {
         handleGetDataBlog();
-        message.success("Cập nhật blog thành công!");
+        message.success("Update blog successful!");
       } else {
-        message.error("Cập nhật blog thất bại!");
+        message.error("Update blog fail!");
       }
     } catch (error) {
-      console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
-      message.warning("Bạn không thay đổi bất kì giá trị nào!");
+      console.error("Something wrong, please try again!", error);
+      message.warning("You don't change any value. Please change any fields to update product");
     }
     setLoading(false);
     setOpenUpdateModal(false)
