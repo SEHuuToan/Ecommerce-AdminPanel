@@ -42,9 +42,9 @@ const ListProduct: React.FC = () => {
         setAllProducts((prevProducts) =>
           prevProducts.filter((product) => product._id !== id)
         );
-        message.success("Delete image successful!");
+        message.success("Delete product successfull!");
       } else {
-        message.error("Delete image fail!");
+        message.error("Delete product fail!");
       }
     } catch {
       message.error("Failed to delete product!");

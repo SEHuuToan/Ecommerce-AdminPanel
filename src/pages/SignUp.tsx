@@ -26,7 +26,7 @@ const SignUp: React.FC = () => {
                 }
             });
             if (resultSignup.data.__v === 0) {
-                message.success("Create Successful!");
+                message.success("Create Successfull!");
                 navigate("/login")
             } else {
                 message.error("Create Fail. Please try again!");

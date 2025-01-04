@@ -89,7 +89,7 @@ const UpdateProduct: React.FC = () => {
             ...prevProduct,
             image: prevProduct.image.filter((img) => img !== file.url),
           }));
-          message.success("Delete image successful!");
+          message.success("Delete image successfull!");
         } else {
           message.error("Failed to delete image!");
         }
@@ -133,7 +133,7 @@ const UpdateProduct: React.FC = () => {
       );
       if (updateProduct.data.success) {
         handleGetDataProduct();
-        message.success("Update product successful!");
+        message.success("Update product successfull!");
       } else {
         message.error("Update product fail. Please check again!");
       }

@@ -130,13 +130,13 @@ const AddProduct: React.FC = () => {
     try {
       const createProduct = await axiosPostProduct('create-product', formData);
       if (createProduct.data.success) {
-        message.success("Tạo sản phẩm thành công!");
+        message.success("Create product successfull!");
       } else {
-        message.error("Tạo sản phẩm thất bại!");
+        message.error("Fail to create product!");
       }
     } catch (error) {
-      console.error("Đã xảy ra lỗi. Vui lòng thử lại.", error);
-      message.error("Đã xảy ra lỗi. Vui lòng thử lại.");
+      console.error("Something wrong with server, please try again!", error);
+      message.error("Something wrong with server, please try again!");
     }
     setLoading(false);
   };

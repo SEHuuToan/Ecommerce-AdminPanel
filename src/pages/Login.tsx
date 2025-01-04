@@ -31,7 +31,7 @@ const Login: React.FC = () => {
         login(user.username, accessToken); //truyen token vao store
         localStorage.setItem("accessToken", accessToken);
         navigate("/");
-        message.success("Login Successful!");
+        message.success("Login Successfull!");
 
       } else {
         message.error("Login Fail. Please try again!");
